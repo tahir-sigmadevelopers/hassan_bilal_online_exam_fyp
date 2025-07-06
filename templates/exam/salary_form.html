@@ -1,0 +1,280 @@
+{% extends 'exam/adminbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="container-fluid px-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-money-bill-wave text-success me-2"></i>
+            Set Teacher Salary
+          </h2>
+          <p class="text-muted mb-0">Configure monthly salary for the selected teacher</p>
+        </div>
+        <a href="{% url 'admin-view-teacher-salary' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-1"></i>
+          Back to Salaries
+        </a>
+      </div>
+
+      <!-- Salary Form Card -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-edit me-2 text-primary"></i>
+            Salary Configuration
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST" autocomplete="off">
+            {% csrf_token %}
+            
+            <!-- Salary Information -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="alert alert-info border-0" role="alert">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                    <div>
+                      <strong>Salary Information:</strong> This amount will be set as the monthly salary for the teacher.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-12 mb-3">
+                <label for="salary" class="form-label fw-medium text-dark">
+                  <i class="fas fa-dollar-sign me-1 text-success"></i>
+                  Monthly Salary Amount
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i class="fas fa-money-bill text-success"></i>
+                  </span>
+                  {% render_field teacherSalary.salary class="form-control border-start-0" placeholder="Enter monthly salary amount" %}
+                  <span class="input-group-text bg-light border-start-0">USD</span>
+                </div>
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Enter the monthly salary amount in USD
+                </div>
+              </div>
+            </div>
+
+            <!-- Salary Preview -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="card bg-light border-0">
+                  <div class="card-body">
+                    <h6 class="text-dark fw-semibold mb-3">
+                      <i class="fas fa-calculator me-2 text-primary"></i>
+                      Salary Breakdown
+                    </h6>
+                    <div class="row text-center">
+                      <div class="col-md-4 mb-2">
+                        <div class="p-3 bg-white rounded">
+                          <h6 class="text-muted mb-1">Monthly</h6>
+                          <h5 class="text-success mb-0" id="monthlySalary">$0</h5>
+                        </div>
+                      </div>
+                      <div class="col-md-4 mb-2">
+                        <div class="p-3 bg-white rounded">
+                          <h6 class="text-muted mb-1">Quarterly</h6>
+                          <h5 class="text-info mb-0" id="quarterlySalary">$0</h5>
+                        </div>
+                      </div>
+                      <div class="col-md-4 mb-2">
+                        <div class="p-3 bg-white rounded">
+                          <h6 class="text-muted mb-1">Yearly</h6>
+                          <h5 class="text-primary mb-0" id="yearlySalary">$0</h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="row">
+              <div class="col-12">
+                <hr class="my-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <a href="{% url 'admin-view-teacher-salary' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-1"></i>
+                    Cancel
+                  </a>
+                  <button type="submit" class="btn btn-success px-4">
+                    <i class="fas fa-check me-1"></i>
+                    Approve & Set Salary
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Guidelines Card -->
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-light border-0 py-3">
+          <h6 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-lightbulb me-2 text-warning"></i>
+            Salary Guidelines
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Salary is set per month
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Amount should be reasonable
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Consider experience level
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Changes apply immediately
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Review before approval
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Can be updated later
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const salaryInput = document.querySelector('input[name="salary"]');
+    const monthlySalary = document.getElementById('monthlySalary');
+    const quarterlySalary = document.getElementById('quarterlySalary');
+    const yearlySalary = document.getElementById('yearlySalary');
+
+    // Update salary breakdown in real-time
+    function updateSalaryBreakdown() {
+        const salary = parseFloat(salaryInput.value) || 0;
+        const monthly = salary;
+        const quarterly = salary * 3;
+        const yearly = salary * 12;
+
+        monthlySalary.textContent = `$${monthly.toLocaleString()}`;
+        quarterlySalary.textContent = `$${quarterly.toLocaleString()}`;
+        yearlySalary.textContent = `$${yearly.toLocaleString()}`;
+    }
+
+    // Add event listener for real-time updates
+    if (salaryInput) {
+        salaryInput.addEventListener('input', updateSalaryBreakdown);
+        updateSalaryBreakdown(); // Initial calculation
+    }
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const salary = parseFloat(salaryInput.value);
+        
+        if (!salary || salary <= 0) {
+            e.preventDefault();
+            alert('Please enter a valid salary amount greater than 0.');
+            salaryInput.focus();
+            return;
+        }
+
+        if (salary > 100000) {
+            if (!confirm('Are you sure you want to set a salary above $100,000?')) {
+                e.preventDefault();
+                return;
+            }
+        }
+
+        // Show confirmation
+        if (!confirm('Are you sure you want to approve and set this salary?')) {
+            e.preventDefault();
+        }
+    });
+
+    // Format input as currency
+    salaryInput.addEventListener('blur', function() {
+        const value = parseFloat(this.value);
+        if (value) {
+            this.value = value.toFixed(2);
+        }
+    });
+
+    // Only allow numbers and decimal point
+    salaryInput.addEventListener('keypress', function(e) {
+        if (!/[0-9.]/.test(e.key)) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.input-group-text {
+    border-color: #dee2e6;
+}
+
+.form-label {
+    color: #495057;
+}
+
+.form-text {
+    font-size: 0.875rem;
+}
+
+.alert {
+    border-radius: 0.5rem;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+</style>
+
+{% endblock content %}

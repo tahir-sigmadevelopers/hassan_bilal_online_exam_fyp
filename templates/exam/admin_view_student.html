@@ -1,0 +1,288 @@
+{% extends 'exam/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-user-graduate text-primary me-2"></i>
+            Student Management
+          </h2>
+          <p class="text-muted mb-0">View and manage all registered students</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-primary fs-6 px-3 py-2 me-3">
+            <i class="fas fa-users me-1"></i>
+            {{ students|length }} Students
+          </span>
+          <a href="{% url 'admin-dashboard' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Dashboard
+          </a>
+        </div>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search students by name, contact, or address...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="statusFilter">
+                <option value="">All Students</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-outline-secondary w-100" type="button" id="refreshBtn">
+                <i class="fas fa-sync-alt me-1"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Students Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-list me-2 text-primary"></i>
+            Student Directory
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          {% if students %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="studentsTable">
+              <thead class="table-light">
+                <tr>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-user me-1 text-primary"></i>
+                    Student Name
+                  </th>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-image me-1 text-primary"></i>
+                    Photo
+                  </th>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-phone me-1 text-primary"></i>
+                    Contact
+                  </th>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-map-marker-alt me-1 text-primary"></i>
+                    Address
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-cogs me-1 text-primary"></i>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in students %}
+                <tr class="align-middle">
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <div class="flex-shrink-0">
+                        <img src="{% static t.profile_pic.url %}" alt="Profile Pic" 
+                             class="rounded-circle" width="45" height="45"
+                             style="object-fit: cover; border: 2px solid #e9ecef;">
+                      </div>
+                      <div class="flex-grow-1 ms-3">
+                        <h6 class="mb-0 fw-semibold text-dark">{{ t.get_name }}</h6>
+                        <small class="text-muted">
+                          <i class="fas fa-id-card me-1"></i>
+                          Student ID: {{ t.id }}
+                        </small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <img src="{% static t.profile_pic.url %}" alt="Profile Pic" 
+                         class="rounded" width="50" height="50"
+                         style="object-fit: cover; border: 1px solid #dee2e6;">
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-phone text-success me-2"></i>
+                      <span class="fw-medium">{{ t.mobile }}</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                      <span class="text-muted">{{ t.address|truncatechars:30 }}</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="btn-group" role="group">
+                      <a href="{% url 'update-student' t.id %}" 
+                         class="btn btn-primary btn-sm px-3"
+                         title="Edit Student">
+                        <i class="fas fa-edit me-1"></i>
+                        Edit
+                      </a>
+                      <a href="{% url 'delete-student' t.id %}" 
+                         class="btn btn-danger btn-sm px-3 ms-1"
+                         title="Delete Student"
+                         onclick="return confirm('Are you sure you want to delete this student? This action cannot be undone.')">
+                        <i class="fas fa-trash me-1"></i>
+                        Delete
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-user-graduate text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h5 class="text-muted mb-2">No Students Found</h5>
+            <p class="text-muted mb-4">There are no students registered in the system yet.</p>
+            <a href="{% url 'admin-dashboard' %}" class="btn btn-primary">
+              <i class="fas fa-arrow-left me-1"></i>
+              Back to Dashboard
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      {% if students.has_other_pages %}
+      <nav aria-label="Students pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if students.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ students.previous_page_number }}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          {% endif %}
+          
+          {% for num in students.paginator.page_range %}
+          <li class="page-item {% if students.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endfor %}
+          
+          {% if students.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ students.next_page_number }}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filter JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const table = document.getElementById('studentsTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Refresh button
+    refreshBtn.addEventListener('click', function() {
+        location.reload();
+    });
+
+    // Add hover effects
+    rows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = '#f8f9fa';
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+
+    // Add click to view details
+    rows.forEach(row => {
+        const nameCell = row.querySelector('td:first-child');
+        if (nameCell) {
+            nameCell.style.cursor = 'pointer';
+            nameCell.addEventListener('click', function() {
+                // You can add a modal or redirect to student details page
+                console.log('View student details');
+            });
+        }
+    });
+});
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.input-group-text {
+    border-color: #dee2e6;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.table tbody tr td:first-child:hover {
+    background-color: #f8f9fa;
+}
+</style>
+
+{% endblock content %}

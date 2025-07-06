@@ -1,0 +1,500 @@
+{% extends 'exam/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-chart-line text-primary me-2"></i>
+            {% if student %}Student Exam Results{% else %}Exam Results Analysis{% endif %}
+          </h2>
+          <p class="text-muted mb-0">
+            {% if student %}
+              Detailed view of {{ student.get_name }}'s exam results and performance metrics
+            {% else %}
+              Detailed view of exam results and performance metrics
+            {% endif %}
+          </p>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-primary fs-6 px-3 py-2 me-3">
+            <i class="fas fa-users me-1"></i>
+            {{ results|length }} Results
+          </span>
+          {% if student %}
+            <a href="{% url 'admin-view-student-marks' %}" class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left me-1"></i>
+              Back to Students
+            </a>
+          {% else %}
+            <a href="{% url 'admin-view-marks' %}" class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left me-1"></i>
+              Back to Exams
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search by course name...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="filterBy">
+                <option value="">All Results</option>
+                <option value="high">High Scores (80%+)</option>
+                <option value="medium">Medium Scores (60-79%)</option>
+                <option value="low">Low Scores (<60%)</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-outline-secondary w-100" type="button" id="refreshBtn">
+                <i class="fas fa-sync-alt me-1"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-list me-2 text-primary"></i>
+            Exam Results
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          {% if results %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="resultsTable">
+              <thead class="table-light">
+                <tr>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-book me-1 text-primary"></i>
+                    Course/Exam
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-star me-1 text-primary"></i>
+                    Total Marks
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-redo me-1 text-primary"></i>
+                    Attempt Number
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-calendar me-1 text-primary"></i>
+                    Exam Date
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-percentage me-1 text-primary"></i>
+                    Performance
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in results %}
+                <tr class="align-middle">
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <div class="flex-shrink-0">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 50px; height: 50px;">
+                          <i class="fas fa-file-alt text-primary fs-5"></i>
+                        </div>
+                      </div>
+                      <div class="flex-grow-1 ms-3">
+                        <h6 class="mb-0 fw-semibold text-dark">{{ t.exam }}</h6>
+                        <small class="text-muted">
+                          <i class="fas fa-id-card me-1"></i>
+                          Result ID: {{ t.id }}
+                        </small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="badge bg-success text-white fs-6 px-3 py-2">
+                        <i class="fas fa-star me-1"></i>
+                        {{ t.marks }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="badge bg-info text-white fs-6 px-3 py-2">
+                        <i class="fas fa-redo me-1"></i>
+                        Attempt {{ forloop.counter }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="text-muted fw-medium">
+                        <i class="fas fa-calendar-alt me-1"></i>
+                        {{ t.date|date:"M d, Y" }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      {% with percentage=t.marks|floatformat:1 %}
+                        {% if percentage >= 80 %}
+                        <span class="badge bg-success text-white fs-6 px-3 py-2">
+                          <i class="fas fa-trophy me-1"></i>
+                          {{ percentage }}%
+                        </span>
+                        {% elif percentage >= 60 %}
+                        <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                          <i class="fas fa-chart-line me-1"></i>
+                          {{ percentage }}%
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger text-white fs-6 px-3 py-2">
+                          <i class="fas fa-exclamation-triangle me-1"></i>
+                          {{ percentage }}%
+                        </span>
+                        {% endif %}
+                      {% endwith %}
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-chart-line text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h5 class="text-muted mb-2">No Results Found</h5>
+            <p class="text-muted mb-4">
+              {% if student %}
+                There are no exam results available for {{ student.get_name }}.
+              {% else %}
+                There are no exam results available for this course.
+              {% endif %}
+            </p>
+            {% if student %}
+              <a href="{% url 'admin-view-student-marks' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-1"></i>
+                Back to Students
+              </a>
+            {% else %}
+              <a href="{% url 'admin-view-marks' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-1"></i>
+                Back to Exams
+              </a>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      {% if results %}
+      <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <i class="fas fa-file-alt text-primary" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="text-dark fw-bold">{{ results|length }}</h4>
+              <p class="text-muted mb-0">Total Results</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <i class="fas fa-star text-warning" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="text-dark fw-bold">
+                {% with total_marks=0 %}
+                  {% for result in results %}
+                    {% with total_marks=total_marks|add:result.marks %}{% endwith %}
+                  {% endfor %}
+                  {{ total_marks }}
+                {% endwith %}
+              </h4>
+              <p class="text-muted mb-0">Total Marks</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <i class="fas fa-trophy text-success" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="text-dark fw-bold" id="avgScore">-</h4>
+              <p class="text-muted mb-0">Average Score</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <i class="fas fa-calendar text-info" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="text-dark fw-bold" id="recentAttempts">-</h4>
+              <p class="text-muted mb-0">Recent Attempts</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Chart -->
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-light border-0 py-3">
+          <h6 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-chart-bar me-2 text-primary"></i>
+            Performance Overview
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-dark fw-semibold mb-3">Score Distribution</h6>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted">High Scores (80%+)</span>
+                  <span class="badge bg-success" id="highScores">0</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-success" id="highScoresBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted">Medium Scores (60-79%)</span>
+                  <span class="badge bg-warning" id="mediumScores">0</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-warning" id="mediumScoresBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted">Low Scores (<60%)</span>
+                  <span class="badge bg-danger" id="lowScores">0</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-danger" id="lowScoresBar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-dark fw-semibold mb-3">Recent Activity</h6>
+              <div class="list-group list-group-flush">
+                {% for result in results|slice:":5" %}
+                <div class="list-group-item border-0 px-0">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1 fw-semibold">{{ result.exam }}</h6>
+                      <small class="text-muted">{{ result.date|date:"M d, Y" }}</small>
+                    </div>
+                    <span class="badge bg-primary">{{ result.marks }} marks</span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Pagination -->
+      {% if results.has_other_pages %}
+      <nav aria-label="Results pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if results.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ results.previous_page_number }}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          {% endif %}
+          
+          {% for num in results.paginator.page_range %}
+          <li class="page-item {% if results.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endfor %}
+          
+          {% if results.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ results.next_page_number }}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filter JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterBy = document.getElementById('filterBy');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const table = document.getElementById('resultsTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Calculate statistics
+    function calculateStats() {
+        const scores = [];
+        let highCount = 0, mediumCount = 0, lowCount = 0;
+        
+        rows.forEach(row => {
+            const scoreElement = row.querySelector('.badge');
+            if (scoreElement && scoreElement.textContent.includes('%')) {
+                const score = parseFloat(scoreElement.textContent.replace('%', ''));
+                scores.push(score);
+                
+                if (score >= 80) highCount++;
+                else if (score >= 60) mediumCount++;
+                else lowCount++;
+            }
+        });
+
+        // Update score distribution
+        const total = scores.length;
+        if (total > 0) {
+            document.getElementById('highScores').textContent = highCount;
+            document.getElementById('mediumScores').textContent = mediumCount;
+            document.getElementById('lowScores').textContent = lowCount;
+            
+            document.getElementById('highScoresBar').style.width = (highCount / total * 100) + '%';
+            document.getElementById('mediumScoresBar').style.width = (mediumCount / total * 100) + '%';
+            document.getElementById('lowScoresBar').style.width = (lowCount / total * 100) + '%';
+            
+            // Calculate average
+            const avg = scores.reduce((a, b) => a + b, 0) / total;
+            document.getElementById('avgScore').textContent = avg.toFixed(1) + '%';
+            
+            // Recent attempts (last 7 days)
+            const recentCount = Math.min(5, total);
+            document.getElementById('recentAttempts').textContent = recentCount;
+        }
+    }
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Filter functionality
+    filterBy.addEventListener('change', function() {
+        const filterValue = this.value;
+        rows.forEach(row => {
+            const scoreElement = row.querySelector('.badge');
+            if (scoreElement && scoreElement.textContent.includes('%')) {
+                const score = parseFloat(scoreElement.textContent.replace('%', ''));
+                let show = true;
+                
+                if (filterValue === 'high') show = score >= 80;
+                else if (filterValue === 'medium') show = score >= 60 && score < 80;
+                else if (filterValue === 'low') show = score < 60;
+                
+                row.style.display = show ? '' : 'none';
+            }
+        });
+    });
+
+    // Refresh button
+    refreshBtn.addEventListener('click', function() {
+        location.reload();
+    });
+
+    // Add hover effects
+    rows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = '#f8f9fa';
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+
+    // Calculate stats on load
+    calculateStats();
+});
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.input-group-text {
+    border-color: #dee2e6;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+.bg-opacity-10 {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+}
+</style>
+
+{% endblock content %}

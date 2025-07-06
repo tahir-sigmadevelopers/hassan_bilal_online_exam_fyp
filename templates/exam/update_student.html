@@ -1,0 +1,312 @@
+{% extends 'exam/adminbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="container-fluid px-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-user-edit text-primary me-2"></i>
+            Update Student Profile
+          </h2>
+          <p class="text-muted mb-0">Modify student information and credentials</p>
+        </div>
+        <a href="{% url 'admin-view-student' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-1"></i>
+          Back to Students
+        </a>
+      </div>
+
+      <!-- Update Form -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-edit me-2 text-primary"></i>
+            Student Information
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <form method="post" autocomplete="off" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Personal Information Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h6 class="text-primary fw-semibold mb-3">
+                  <i class="fas fa-user me-2"></i>
+                  Personal Information
+                </h6>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="first_name" class="form-label fw-medium text-dark">
+                  <i class="fas fa-user me-1 text-muted"></i>
+                  First Name
+                </label>
+                {% render_field userForm.first_name class="form-control" placeholder="Enter first name" %}
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Enter the student's first name
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="last_name" class="form-label fw-medium text-dark">
+                  <i class="fas fa-user me-1 text-muted"></i>
+                  Last Name
+                </label>
+                {% render_field userForm.last_name class="form-control" placeholder="Enter last name" %}
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Enter the student's last name
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="mobile" class="form-label fw-medium text-dark">
+                  <i class="fas fa-phone me-1 text-muted"></i>
+                  Contact Number
+                </label>
+                {% render_field studentForm.mobile class="form-control" placeholder="Enter mobile number" %}
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Enter a valid mobile number
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="address" class="form-label fw-medium text-dark">
+                  <i class="fas fa-map-marker-alt me-1 text-muted"></i>
+                  Address
+                </label>
+                {% render_field studentForm.address class="form-control" placeholder="Enter address" %}
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Enter the student's address
+                </div>
+              </div>
+            </div>
+
+            <!-- Account Information Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h6 class="text-primary fw-semibold mb-3">
+                  <i class="fas fa-shield-alt me-2"></i>
+                  Account Information
+                </h6>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="username" class="form-label fw-medium text-dark">
+                  <i class="fas fa-user-tag me-1 text-muted"></i>
+                  Username
+                </label>
+                {% render_field userForm.username class="form-control" placeholder="Enter username" %}
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Unique username for login
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label fw-medium text-dark">
+                  <i class="fas fa-lock me-1 text-muted"></i>
+                  Password
+                </label>
+                {% render_field userForm.password class="form-control" placeholder="Enter new password" %}
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Leave blank to keep current password
+                </div>
+              </div>
+            </div>
+
+            <!-- Profile Picture Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h6 class="text-primary fw-semibold mb-3">
+                  <i class="fas fa-image me-2"></i>
+                  Profile Picture
+                </h6>
+              </div>
+              
+              <div class="col-12 mb-3">
+                <label for="profile_pic" class="form-label fw-medium text-dark">
+                  <i class="fas fa-camera me-1 text-muted"></i>
+                  Profile Picture
+                </label>
+                <div class="input-group">
+                  {% render_field studentForm.profile_pic class="form-control" %}
+                  <button class="btn btn-outline-secondary" type="button" id="clearFile">
+                    <i class="fas fa-times"></i>
+                    Clear
+                  </button>
+                </div>
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Upload a new profile picture (JPG, PNG, GIF)
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="row">
+              <div class="col-12">
+                <hr class="my-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <a href="{% url 'admin-view-student' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-1"></i>
+                    Cancel
+                  </a>
+                  <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-1"></i>
+                    Update Student
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Guidelines Card -->
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-light border-0 py-3">
+          <h6 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-lightbulb me-2 text-warning"></i>
+            Update Guidelines
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  All fields marked with * are required
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Username must be unique across the system
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Password should be at least 8 characters
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Profile picture should be under 5MB
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Contact number should be valid format
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  Changes will be applied immediately
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Clear file input
+    const clearFileBtn = document.getElementById('clearFile');
+    const fileInput = document.querySelector('input[type="file"]');
+    
+    if (clearFileBtn && fileInput) {
+        clearFileBtn.addEventListener('click', function() {
+            fileInput.value = '';
+        });
+    }
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('input[required], select[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+        }
+    });
+
+    // Real-time validation
+    const inputs = form.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.hasAttribute('required') && !this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.input-group-text {
+    border-color: #dee2e6;
+}
+
+.form-label {
+    color: #495057;
+}
+
+.form-text {
+    font-size: 0.875rem;
+}
+</style>
+
+{% endblock content %}

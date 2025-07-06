@@ -1,0 +1,245 @@
+{% extends 'exam/adminbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-book text-primary me-2"></i>
+            Course Management Dashboard
+          </h2>
+          <p class="text-muted mb-0">Manage courses, add new courses, and view existing courses</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-primary fs-6 px-3 py-2 me-3">
+            <i class="fas fa-book me-1"></i>
+            Course Management
+          </span>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="row g-4 mb-4">
+        <!-- Add Course -->
+        <div class="col-lg-6 col-md-6">
+          <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden" 
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="text-white-50 mb-2 fw-semibold">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Add New Course
+                  </h6>
+                  <h2 class="text-white fw-bold mb-3">
+                    <i class="fas fa-plus"></i>
+                  </h2>
+                  <p class="text-white-50 mb-0 small">
+                    <i class="fas fa-edit me-1"></i>
+                    Create and configure new courses
+                  </p>
+                </div>
+                <div class="flex-shrink-0">
+                  <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" 
+                       style="width: 60px; height: 60px;">
+                    <i class="fas fa-plus text-white fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-0">
+              <a href="admin-add-course" class="btn btn-light w-100 rounded-0 text-primary fw-semibold">
+                <i class="fas fa-plus me-2"></i>
+                Add New Course
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- View Courses -->
+        <div class="col-lg-6 col-md-6">
+          <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden" 
+               style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="text-white-50 mb-2 fw-semibold">
+                    <i class="fas fa-eye me-2"></i>
+                    View All Courses
+                  </h6>
+                  <h2 class="text-white fw-bold mb-3">
+                    <i class="fas fa-eye"></i>
+                  </h2>
+                  <p class="text-white-50 mb-0 small">
+                    <i class="fas fa-list me-1"></i>
+                    Browse and manage existing courses
+                  </p>
+                </div>
+                <div class="flex-shrink-0">
+                  <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" 
+                       style="width: 60px; height: 60px;">
+                    <i class="fas fa-eye text-white fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-0">
+              <a href="admin-view-course" class="btn btn-light w-100 rounded-0 text-danger fw-semibold">
+                <i class="fas fa-eye me-2"></i>
+                View All Courses
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+              <h5 class="mb-0 text-dark fw-semibold">
+                <i class="fas fa-bolt me-2 text-primary"></i>
+                Quick Actions
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <a href="admin-add-course" class="btn btn-outline-primary w-100 p-3 text-start">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                           style="width: 50px; height: 50px;">
+                        <i class="fas fa-plus text-primary fs-4"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-1 fw-semibold">Add New Course</h6>
+                        <small class="text-muted">Create and configure new courses</small>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <a href="admin-view-course" class="btn btn-outline-success w-100 p-3 text-start">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                           style="width: 50px; height: 50px;">
+                        <i class="fas fa-eye text-success fs-4"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-1 fw-semibold">View All Courses</h6>
+                        <small class="text-muted">Browse and manage existing courses</small>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Management Features -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+              <h5 class="mb-0 text-dark fw-semibold">
+                <i class="fas fa-cogs me-2 text-primary"></i>
+                Course Management Features
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-plus text-primary"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Create Courses</h6>
+                      <small class="text-muted">Add new courses to the system</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-edit text-success"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Edit Courses</h6>
+                      <small class="text-muted">Modify existing course details</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-trash text-danger"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Delete Courses</h6>
+                      <small class="text-muted">Remove courses from the system</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Statistics -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+              <h5 class="mb-0 text-dark fw-semibold">
+                <i class="fas fa-chart-pie me-2 text-primary"></i>
+                Course Statistics
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-book text-primary"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Total Courses</h6>
+                      <small class="text-muted">All courses in the system</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Active Courses</h6>
+                      <small class="text-muted">Currently available courses</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

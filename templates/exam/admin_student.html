@@ -1,0 +1,243 @@
+{% extends 'exam/adminbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-user-graduate text-primary me-2"></i>
+            Student Management Dashboard
+          </h2>
+          <p class="text-muted mb-0">Overview of student statistics and management options</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-primary fs-6 px-3 py-2 me-3">
+            <i class="fas fa-users me-1"></i>
+            {{ total_student }} Total Students
+          </span>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="row g-4 mb-4">
+        <!-- Total Students -->
+        <div class="col-lg-6 col-md-6">
+          <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden" 
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="text-white-50 mb-2 fw-semibold">
+                    <i class="fas fa-user-graduate me-2"></i>
+                    Registered Students
+                  </h6>
+                  <h2 class="text-white fw-bold mb-3">{{ total_student }}</h2>
+                  <p class="text-white-50 mb-0 small">
+                    <i class="fas fa-chart-line me-1"></i>
+                    Total enrolled students
+                  </p>
+                </div>
+                <div class="flex-shrink-0">
+                  <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" 
+                       style="width: 60px; height: 60px;">
+                    <i class="fas fa-user-graduate text-white fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-0">
+              <a href="admin-view-student" class="btn btn-light w-100 rounded-0 text-primary fw-semibold">
+                <i class="fas fa-eye me-2"></i>
+                View All Students
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Marks -->
+        <div class="col-lg-6 col-md-6">
+          <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden" 
+               style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="text-white-50 mb-2 fw-semibold">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Student Performance
+                  </h6>
+                  <h2 class="text-white fw-bold mb-3">
+                    <i class="fas fa-eye"></i>
+                  </h2>
+                  <p class="text-white-50 mb-0 small">
+                    <i class="fas fa-sort-numeric-up me-1"></i>
+                    View exam results and marks
+                  </p>
+                </div>
+                <div class="flex-shrink-0">
+                  <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" 
+                       style="width: 60px; height: 60px;">
+                    <i class="fas fa-chart-line text-white fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-0">
+              <a href="admin-view-student-marks" class="btn btn-light w-100 rounded-0 text-danger fw-semibold">
+                <i class="fas fa-chart-bar me-2"></i>
+                View Student Marks
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+              <h5 class="mb-0 text-dark fw-semibold">
+                <i class="fas fa-bolt me-2 text-primary"></i>
+                Quick Actions
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <a href="admin-view-student" class="btn btn-outline-primary w-100 p-3 text-start">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                           style="width: 50px; height: 50px;">
+                        <i class="fas fa-users text-primary fs-4"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-1 fw-semibold">View All Students</h6>
+                        <small class="text-muted">Manage registered students</small>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <a href="admin-view-student-marks" class="btn btn-outline-success w-100 p-3 text-start">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                           style="width: 50px; height: 50px;">
+                        <i class="fas fa-chart-bar text-success fs-4"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-1 fw-semibold">Student Performance</h6>
+                        <small class="text-muted">View exam results and analytics</small>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Statistics -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+              <h5 class="mb-0 text-dark fw-semibold">
+                <i class="fas fa-chart-pie me-2 text-primary"></i>
+                Student Statistics
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-user-graduate text-primary"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Total Students</h6>
+                      <small class="text-muted">{{ total_student }} registered</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Active Students</h6>
+                      <small class="text-muted">Currently enrolled</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-chart-line text-info"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Performance Tracking</h6>
+                      <small class="text-muted">Monitor exam results</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+              <h5 class="mb-0 text-dark fw-semibold">
+                <i class="fas fa-history me-2 text-primary"></i>
+                Recent Activity
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-user-plus text-primary"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Student Registrations</h6>
+                      <small class="text-muted">{{ total_student }} total students registered</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-graduation-cap text-success"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-semibold">Exam Participation</h6>
+                      <small class="text-muted">Track student performance</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

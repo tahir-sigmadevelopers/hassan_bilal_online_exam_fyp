@@ -1,0 +1,417 @@
+{% extends 'exam/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-question-circle text-primary me-2"></i>
+            Question Bank Management
+          </h2>
+          <p class="text-muted mb-0">View and manage question sets by course</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-primary fs-6 px-3 py-2 me-3">
+            <i class="fas fa-graduation-cap me-1"></i>
+            {{ courses|length }} Courses
+          </span>
+          <a href="{% url 'admin-add-question' %}" class="btn btn-success me-2">
+            <i class="fas fa-plus me-1"></i>
+            Add Questions
+          </a>
+          <a href="{% url 'admin-dashboard' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Dashboard
+          </a>
+        </div>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search courses by name...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="filterBy">
+                <option value="">All Courses</option>
+                <option value="with-questions">With Questions</option>
+                <option value="no-questions">No Questions</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-outline-secondary w-100" type="button" id="refreshBtn">
+                <i class="fas fa-sync-alt me-1"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Sets Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-list me-2 text-primary"></i>
+            Available Question Sets
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          {% if courses %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="coursesTable">
+              <thead class="table-light">
+                <tr>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-book me-1 text-primary"></i>
+                    Course Name
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-question-circle me-1 text-primary"></i>
+                    Total Questions
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-star me-1 text-primary"></i>
+                    Total Marks
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-cogs me-1 text-primary"></i>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in courses %}
+                <tr class="align-middle">
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <div class="flex-shrink-0">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 50px; height: 50px;">
+                          <i class="fas fa-question-circle text-primary fs-5"></i>
+                        </div>
+                      </div>
+                      <div class="flex-grow-1 ms-3">
+                        <h6 class="mb-0 fw-semibold text-dark">{{ c.course_name }}</h6>
+                        <small class="text-muted">
+                          <i class="fas fa-id-card me-1"></i>
+                          Course ID: {{ c.id }}
+                        </small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      {% if c.actual_question_count > 0 %}
+                      <span class="badge bg-success text-white fs-6 px-3 py-2">
+                        <i class="fas fa-question-circle me-1"></i>
+                        {{ c.actual_question_count }}
+                      </span>
+                      {% else %}
+                      <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        No Questions
+                      </span>
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="badge bg-info text-white fs-6 px-3 py-2">
+                        <i class="fas fa-star me-1"></i>
+                        {{ c.total_marks }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="btn-group" role="group">
+                      <a href="{% url 'view-question' c.id %}" 
+                         class="btn btn-primary btn-sm px-3"
+                         title="View Questions">
+                        <i class="fas fa-eye me-1"></i>
+                        View Questions
+                      </a>
+                      <a href="{% url 'admin-add-question' %}?course={{ c.id }}" 
+                         class="btn btn-success btn-sm px-3 ms-1"
+                         title="Add Questions">
+                        <i class="fas fa-plus me-1"></i>
+                        Add Questions
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-question-circle text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h5 class="text-muted mb-2">No Question Sets Found</h5>
+            <p class="text-muted mb-4">There are no courses with question sets available.</p>
+            <a href="{% url 'admin-add-course' %}" class="btn btn-primary me-2">
+              <i class="fas fa-plus me-1"></i>
+              Add Course
+            </a>
+            <a href="{% url 'admin-add-question' %}" class="btn btn-success me-2">
+              <i class="fas fa-question-circle me-1"></i>
+              Add Questions
+            </a>
+            <a href="{% url 'admin-dashboard' %}" class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left me-1"></i>
+              Back to Dashboard
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      {% if courses %}
+      <div class="row mt-4">
+        <div class="col-md-4 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <i class="fas fa-book text-primary" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="text-dark fw-bold">{{ courses|length }}</h4>
+              <p class="text-muted mb-0">Total Courses</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <i class="fas fa-question-circle text-info" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="text-dark fw-bold">
+                {% with total_questions=0 %}
+                  {% for course in courses %}
+                    {% with total_questions=total_questions|add:course.actual_question_count %}{% endwith %}
+                  {% endfor %}
+                  {{ total_questions }}
+                {% endwith %}
+              </h4>
+              <p class="text-muted mb-0">Total Questions</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <i class="fas fa-star text-warning" style="font-size: 2.5rem;"></i>
+              </div>
+              <h4 class="text-dark fw-bold">
+                {% with total_marks=0 %}
+                  {% for course in courses %}
+                    {% with total_marks=total_marks|add:course.total_marks %}{% endwith %}
+                  {% endfor %}
+                  {{ total_marks }}
+                {% endwith %}
+              </h4>
+              <p class="text-muted mb-0">Total Marks</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-light border-0 py-3">
+          <h6 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-bolt me-2 text-warning"></i>
+            Quick Actions
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6 col-lg-3">
+              <a href="{% url 'admin-add-course' %}" class="btn btn-outline-primary w-100">
+                <i class="fas fa-plus me-2"></i>
+                Add New Course
+              </a>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <a href="{% url 'admin-add-question' %}" class="btn btn-outline-success w-100">
+                <i class="fas fa-question-circle me-2"></i>
+                Add Questions
+              </a>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <a href="{% url 'admin-view-course' %}" class="btn btn-outline-info w-100">
+                <i class="fas fa-list me-2"></i>
+                View Courses
+              </a>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <a href="{% url 'admin-view-marks' %}" class="btn btn-outline-secondary w-100">
+                <i class="fas fa-chart-bar me-2"></i>
+                View Results
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Pagination -->
+      {% if courses.has_other_pages %}
+      <nav aria-label="Courses pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if courses.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ courses.previous_page_number }}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          {% endif %}
+          
+          {% for num in courses.paginator.page_range %}
+          <li class="page-item {% if courses.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endfor %}
+          
+          {% if courses.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ courses.next_page_number }}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filter JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterBy = document.getElementById('filterBy');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const table = document.getElementById('coursesTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Filter functionality
+    filterBy.addEventListener('change', function() {
+        const filterValue = this.value;
+        rows.forEach(row => {
+            const questionCount = row.querySelector('.badge');
+            if (questionCount) {
+                const hasQuestions = !questionCount.textContent.includes('No Questions');
+                let show = true;
+                
+                if (filterValue === 'with-questions') {
+                    show = hasQuestions;
+                } else if (filterValue === 'no-questions') {
+                    show = !hasQuestions;
+                }
+                
+                row.style.display = show ? '' : 'none';
+            }
+        });
+    });
+
+    // Refresh button
+    refreshBtn.addEventListener('click', function() {
+        location.reload();
+    });
+
+    // Add hover effects
+    rows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = '#f8f9fa';
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+
+    // Add click to view details
+    rows.forEach(row => {
+        const nameCell = row.querySelector('td:first-child');
+        if (nameCell) {
+            nameCell.style.cursor = 'pointer';
+            nameCell.addEventListener('click', function() {
+                // You can add a modal or redirect to course details page
+                console.log('View course details');
+            });
+        }
+    });
+});
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.input-group-text {
+    border-color: #dee2e6;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.table tbody tr td:first-child:hover {
+    background-color: #f8f9fa;
+}
+
+.bg-opacity-10 {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+}
+</style>
+
+{% endblock content %}

@@ -1,0 +1,308 @@
+{% extends 'exam/adminbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="content-header">
+  <h1 class="content-title">Dashboard Overview</h1>
+  <p class="content-subtitle">Welcome back! Here's what's happening with your online examination system.</p>
+</div>
+
+<div class="row g-4 mb-5">
+  <!-- Students Card -->
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card bg-gradient-primary text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title mb-2">Total Students</h6>
+            <h2 class="mb-0">{{total_student}}</h2>
+            <small class="opacity-75">Registered students</small>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="admin-view-student" class="btn btn-light btn-sm w-100">
+          <i class="fas fa-eye me-2"></i>View Students
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teachers Card -->
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card bg-gradient-success text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title mb-2">Total Teachers</h6>
+            <h2 class="mb-0">{{total_teacher}}</h2>
+            <small class="opacity-75">Active teachers</small>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="admin-view-teacher" class="btn btn-light btn-sm w-100">
+          <i class="fas fa-eye me-2"></i>View Teachers
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Courses Card -->
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card bg-gradient-info text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title mb-2">Total Courses</h6>
+            <h2 class="mb-0">{{total_course}}</h2>
+            <small class="opacity-75">Available courses</small>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-book"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="admin-view-course" class="btn btn-light btn-sm w-100">
+          <i class="fas fa-eye me-2"></i>View Courses
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Questions Card -->
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card bg-gradient-warning text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title mb-2">Total Questions</h6>
+            <h2 class="mb-0">{{total_question}}</h2>
+            <small class="opacity-75">Available questions</small>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-question-circle"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="admin-view-question" class="btn btn-light btn-sm w-100">
+          <i class="fas fa-eye me-2"></i>View Questions
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="row g-4 mb-5">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-bolt me-2"></i>Quick Actions
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3 col-sm-6">
+            <a href="admin-add-course" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+              <i class="fas fa-plus-circle mb-2" style="font-size: 2rem;"></i>
+              <span>Add Course</span>
+            </a>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <a href="admin-add-question" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+              <i class="fas fa-question-circle mb-2" style="font-size: 2rem;"></i>
+              <span>Add Question</span>
+            </a>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <a href="admin-view-marks" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+              <i class="fas fa-chart-bar mb-2" style="font-size: 2rem;"></i>
+              <span>View Marks</span>
+            </a>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <a href="admin-view-pending-teacher" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+              <i class="fas fa-clock mb-2" style="font-size: 2rem;"></i>
+              <span>Pending Teachers</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- System Status Section -->
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-chart-line me-2"></i>System Overview
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center p-3 bg-light rounded">
+              <div class="flex-shrink-0">
+                <i class="fas fa-users text-primary" style="font-size: 2rem;"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Active Users</h6>
+                <p class="mb-0 text-muted">{{total_student|add:total_teacher}} total users</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center p-3 bg-light rounded">
+              <div class="flex-shrink-0">
+                <i class="fas fa-file-alt text-success" style="font-size: 2rem;"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Total Content</h6>
+                <p class="mb-0 text-muted">{{total_course|add:total_question}} items</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center p-3 bg-light rounded">
+              <div class="flex-shrink-0">
+                <i class="fas fa-shield-alt text-info" style="font-size: 2rem;"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">System Status</h6>
+                <p class="mb-0 text-success">All systems operational</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center p-3 bg-light rounded">
+              <div class="flex-shrink-0">
+                <i class="fas fa-clock text-warning" style="font-size: 2rem;"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Last Updated</h6>
+                <p class="mb-0 text-muted">Just now</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-info-circle me-2"></i>Quick Info
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="list-group list-group-flush">
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+            <span>Students</span>
+            <span class="badge bg-primary rounded-pill">{{total_student}}</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+            <span>Teachers</span>
+            <span class="badge bg-success rounded-pill">{{total_teacher}}</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+            <span>Courses</span>
+            <span class="badge bg-info rounded-pill">{{total_course}}</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+            <span>Questions</span>
+            <span class="badge bg-warning rounded-pill">{{total_question}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stat-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-icon {
+    font-size: 3rem;
+    opacity: 0.8;
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+  }
+
+  .bg-gradient-success {
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+  }
+
+  .bg-gradient-info {
+    background: linear-gradient(45deg, #43e97b, #38f9d7);
+  }
+
+  .bg-gradient-warning {
+    background: linear-gradient(45deg, #fa709a, #fee140);
+  }
+
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 15px 15px 0 0 !important;
+  }
+
+  .btn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .list-group-item {
+    padding: 0.75rem 0;
+  }
+
+  .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+</style>
+
+{% endblock content %}

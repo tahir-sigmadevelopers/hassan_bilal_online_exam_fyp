@@ -1,0 +1,347 @@
+{% extends 'exam/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-dollar-sign text-primary me-2"></i>
+            Teacher Salary Management
+          </h2>
+          <p class="text-muted mb-0">View and manage teacher salary information</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-primary fs-6 px-3 py-2 me-3">
+            <i class="fas fa-users me-1"></i>
+            {{ teachers|length }} Teachers
+          </span>
+          <a href="admin-teacher" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Teachers
+          </a>
+        </div>
+      </div>
+
+      <!-- Salary Summary -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                   style="width: 60px; height: 60px;">
+                <i class="fas fa-users text-primary fs-3"></i>
+              </div>
+              <h4 class="text-dark fw-bold mb-2">{{ teachers|length }}</h4>
+              <p class="text-muted mb-0">Total Teachers</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                   style="width: 60px; height: 60px;">
+                <i class="fas fa-dollar-sign text-success fs-3"></i>
+              </div>
+              <h4 class="text-dark fw-bold mb-2">
+                ${% for teacher in teachers %}{% if forloop.first %}{{ teacher.salary }}{% else %}{% endif %}{% endfor %}
+              </h4>
+              <p class="text-muted mb-0">Total Salary</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                   style="width: 60px; height: 60px;">
+                <i class="fas fa-chart-line text-info fs-3"></i>
+              </div>
+              <h4 class="text-dark fw-bold mb-2">
+                ${% for teacher in teachers %}{% if forloop.first %}{{ teacher.salary|floatformat:0 }}{% else %}{% endif %}{% endfor %}
+              </h4>
+              <p class="text-muted mb-0">Average Salary</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search by teacher name...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="filterBy">
+                <option value="">All Teachers</option>
+                <option value="high">High Salary ($5000+)</option>
+                <option value="medium">Medium Salary ($3000-5000)</option>
+                <option value="low">Low Salary (<$3000)</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-outline-secondary w-100" type="button" id="refreshBtn">
+                <i class="fas fa-sync-alt me-1"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teachers Salary Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-list me-2 text-primary"></i>
+            Teacher Salary Details
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          {% if teachers %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="teachersTable">
+              <thead class="table-light">
+                <tr>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-user me-1 text-primary"></i>
+                    Teacher Name
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-image me-1 text-primary"></i>
+                    Photo
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-phone me-1 text-primary"></i>
+                    Contact
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-dollar-sign me-1 text-primary"></i>
+                    Salary
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-chart-bar me-1 text-primary"></i>
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in teachers %}
+                <tr class="align-middle">
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <div class="flex-grow-1">
+                        <h6 class="mb-0 fw-semibold text-dark">{{ t.get_name }}</h6>
+                        <small class="text-muted">
+                          <i class="fas fa-id-card me-1"></i>
+                          Teacher ID: {{ t.id }}
+                        </small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <img src="{% static t.profile_pic.url %}" alt="Profile Pic" 
+                           class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;" />
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="text-muted fw-medium">
+                        <i class="fas fa-phone me-1"></i>
+                        {{ t.mobile }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="badge bg-success text-white fs-6 px-3 py-2">
+                        <i class="fas fa-dollar-sign me-1"></i>
+                        ${{ t.salary }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="badge bg-success text-white fs-6 px-3 py-2">
+                        <i class="fas fa-check-circle me-1"></i>
+                        Active
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-dollar-sign text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h5 class="text-muted mb-2">No Teachers Found</h5>
+            <p class="text-muted mb-4">There are no teachers with salary information available.</p>
+            <a href="admin-teacher" class="btn btn-primary">
+              <i class="fas fa-arrow-left me-1"></i>
+              Back to Teachers
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Salary Statistics -->
+      {% if teachers %}
+      <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="text-dark fw-semibold mb-3">Salary Distribution</h6>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted">High Salary ($5000+)</span>
+                  <span class="badge bg-success" id="highSalary">0</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-success" id="highSalaryBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted">Medium Salary ($3000-5000)</span>
+                  <span class="badge bg-warning" id="mediumSalary">0</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-warning" id="mediumSalaryBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted">Low Salary (<$3000)</span>
+                  <span class="badge bg-danger" id="lowSalary">0</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-danger" id="lowSalaryBar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="text-dark fw-semibold mb-3">Recent Updates</h6>
+              <div class="list-group list-group-flush">
+                {% for teacher in teachers|slice:":5" %}
+                <div class="list-group-item border-0 px-0">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1 fw-semibold">{{ teacher.get_name }}</h6>
+                      <small class="text-muted">Salary: ${{ teacher.salary }}</small>
+                    </div>
+                    <span class="badge bg-primary">Active</span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filter JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterBy = document.getElementById('filterBy');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const table = document.getElementById('teachersTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        rows.forEach(row => {
+            const teacherName = row.querySelector('h6').textContent.toLowerCase();
+            if (teacherName.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Filter functionality
+    filterBy.addEventListener('change', function() {
+        const filterValue = this.value;
+        rows.forEach(row => {
+            const salaryElement = row.querySelector('.badge');
+            if (salaryElement) {
+                const salary = parseFloat(salaryElement.textContent.replace('$', ''));
+                let show = true;
+                
+                if (filterValue === 'high' && salary < 5000) show = false;
+                if (filterValue === 'medium' && (salary < 3000 || salary >= 5000)) show = false;
+                if (filterValue === 'low' && salary >= 3000) show = false;
+                
+                row.style.display = show ? '' : 'none';
+            }
+        });
+    });
+
+    // Refresh functionality
+    refreshBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        filterBy.value = '';
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+    });
+
+    // Calculate salary statistics
+    function calculateSalaryStats() {
+        let highCount = 0, mediumCount = 0, lowCount = 0;
+        const totalTeachers = rows.length;
+        
+        rows.forEach(row => {
+            const salaryElement = row.querySelector('.badge');
+            if (salaryElement) {
+                const salary = parseFloat(salaryElement.textContent.replace('$', ''));
+                if (salary >= 5000) highCount++;
+                else if (salary >= 3000) mediumCount++;
+                else lowCount++;
+            }
+        });
+
+        // Update statistics
+        document.getElementById('highSalary').textContent = highCount;
+        document.getElementById('mediumSalary').textContent = mediumCount;
+        document.getElementById('lowSalary').textContent = lowCount;
+
+        document.getElementById('highSalaryBar').style.width = (highCount / totalTeachers * 100) + '%';
+        document.getElementById('mediumSalaryBar').style.width = (mediumCount / totalTeachers * 100) + '%';
+        document.getElementById('lowSalaryBar').style.width = (lowCount / totalTeachers * 100) + '%';
+    }
+
+    // Initialize statistics
+    calculateSalaryStats();
+});
+</script>
+
+{% endblock content %}

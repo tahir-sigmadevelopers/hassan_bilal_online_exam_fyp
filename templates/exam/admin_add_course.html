@@ -1,0 +1,197 @@
+{% extends 'exam/adminbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="content-header">
+  <h1 class="content-title">Add New Course</h1>
+  <p class="content-subtitle">Create a new course for the online examination system</p>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-xl-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-plus-circle me-2"></i>Course Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <form method="POST" autocomplete="off">
+          {% csrf_token %}
+          
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="course_name" class="form-label">
+                  <i class="fas fa-book me-2"></i>Course Name
+                </label>
+                {% render_field courseForm.course_name class="form-control" placeholder="Enter course name (e.g., Software Engineering)" %}
+                <div class="form-text">Enter a descriptive name for the course</div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="question_number" class="form-label">
+                  <i class="fas fa-question-circle me-2"></i>Total Questions
+                </label>
+                {% render_field courseForm.question_number class="form-control" placeholder="e.g., 50" %}
+                <div class="form-text">Number of questions in this course</div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="total_marks" class="form-label">
+                  <i class="fas fa-star me-2"></i>Total Marks
+                </label>
+                {% render_field courseForm.total_marks class="form-control" placeholder="e.g., 100" %}
+                <div class="form-text">Maximum marks for this course</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <a href="/admin-course" class="btn btn-outline-secondary me-md-2">
+              <i class="fas fa-arrow-left me-2"></i>Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus me-2"></i>Add Course
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Course Guidelines -->
+<div class="row justify-content-center mt-4">
+  <div class="col-lg-8 col-xl-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-info-circle me-2"></i>Course Creation Guidelines
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-success mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Course Name</h6>
+                <p class="mb-0 text-muted small">Use clear, descriptive names that students can easily understand</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-success mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Question Count</h6>
+                <p class="mb-0 text-muted small">Set appropriate number of questions based on course complexity</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-success mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Total Marks</h6>
+                <p class="mb-0 text-muted small">Ensure marks align with question count and difficulty level</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-success mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Consistency</h6>
+                <p class="mb-0 text-muted small">Maintain consistent naming conventions across all courses</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  }
+
+  .form-control::placeholder {
+    color: #999;
+  }
+
+  .form-text {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+
+  .btn {
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(45deg, #2980b9, #1f5f8b);
+  }
+
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 15px 15px 0 0 !important;
+  }
+
+  .card-title {
+    color: #333;
+    font-weight: 600;
+  }
+</style>
+
+{% endblock content %}

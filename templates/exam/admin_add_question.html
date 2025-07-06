@@ -1,0 +1,265 @@
+{% extends 'exam/adminbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="content-header">
+  <h1 class="content-title">Add New Question</h1>
+  <p class="content-subtitle">Create a new question for the online examination system</p>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-10 col-xl-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-plus-circle me-2"></i>Question Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <form method="POST" autocomplete="off">
+          {% csrf_token %}
+          
+          <div class="row g-3">
+            <!-- Course Selection -->
+            <div class="col-12">
+              <div class="form-group">
+                <label for="course" class="form-label">
+                  <i class="fas fa-book me-2"></i>Select Course
+                </label>
+                {% render_field questionForm.courseID|attr:'required:true' class="form-control" %}
+                <div class="form-text">Choose the course this question belongs to</div>
+              </div>
+            </div>
+            
+            <!-- Question Text -->
+            <div class="col-12">
+              <div class="form-group">
+                <label for="question" class="form-label">
+                  <i class="fas fa-question-circle me-2"></i>Question Text
+                </label>
+                {% render_field questionForm.question|attr:'required:true' class="form-control" rows="3" placeholder="Enter the question text here..." %}
+                <div class="form-text">Write a clear and concise question</div>
+              </div>
+            </div>
+            
+            <!-- Marks -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="marks" class="form-label">
+                  <i class="fas fa-star me-2"></i>Marks
+                </label>
+                {% render_field questionForm.marks|attr:'required:true' class="form-control" placeholder="e.g., 5" %}
+                <div class="form-text">Points awarded for correct answer</div>
+              </div>
+            </div>
+            
+            <!-- Correct Answer -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="answer" class="form-label">
+                  <i class="fas fa-check-circle me-2"></i>Correct Answer
+                </label>
+                {% render_field questionForm.answer|attr:'required:true' class="form-control" %}
+                <div class="form-text">Select the correct option</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Options Section -->
+          <div class="mt-4">
+            <h6 class="mb-3">
+              <i class="fas fa-list-ul me-2"></i>Answer Options
+            </h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="option1" class="form-label">
+                    <span class="badge bg-primary me-2">A</span>Option 1
+                  </label>
+                  {% render_field questionForm.option1|attr:'required:true' class="form-control" placeholder="Enter option 1" %}
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="option2" class="form-label">
+                    <span class="badge bg-success me-2">B</span>Option 2
+                  </label>
+                  {% render_field questionForm.option2|attr:'required:true' class="form-control" placeholder="Enter option 2" %}
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="option3" class="form-label">
+                    <span class="badge bg-info me-2">C</span>Option 3
+                  </label>
+                  {% render_field questionForm.option3|attr:'required:true' class="form-control" placeholder="Enter option 3" %}
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="option4" class="form-label">
+                    <span class="badge bg-warning me-2">D</span>Option 4
+                  </label>
+                  {% render_field questionForm.option4|attr:'required:true' class="form-control" placeholder="Enter option 4" %}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <a href="/admin-question" class="btn btn-outline-secondary me-md-2">
+              <i class="fas fa-arrow-left me-2"></i>Cancel
+            </a>
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-plus me-2"></i>Add Question
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Question Guidelines -->
+<div class="row justify-content-center mt-4">
+  <div class="col-lg-10 col-xl-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-info-circle me-2"></i>Question Creation Guidelines
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-lightbulb text-warning mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Clear Questions</h6>
+                <p class="mb-0 text-muted small">Write questions that are unambiguous and easy to understand</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-balance-scale text-info mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Balanced Options</h6>
+                <p class="mb-0 text-muted small">Ensure all options are plausible and similar in length</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-star text-warning mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Appropriate Marks</h6>
+                <p class="mb-0 text-muted small">Assign marks based on question difficulty and importance</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0">
+                <i class="fas fa-check-double text-success mt-1"></i>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h6 class="mb-1">Correct Answer</h6>
+                <p class="mb-0 text-muted small">Double-check that the correct answer is properly selected</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  }
+
+  .form-control::placeholder {
+    color: #999;
+  }
+
+  .form-text {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+
+  .btn {
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+  }
+
+  .btn-success:hover {
+    background: linear-gradient(45deg, #20c997, #17a2b8);
+  }
+
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 15px 15px 0 0 !important;
+  }
+
+  .card-title {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+</style>
+
+{% endblock content %}

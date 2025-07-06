@@ -1,0 +1,269 @@
+{% extends 'exam/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h3 mb-0 text-dark fw-bold">
+            <i class="fas fa-clock text-warning me-2"></i>
+            Pending Teacher Approvals
+          </h2>
+          <p class="text-muted mb-0">Review and approve teacher registration requests</p>
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+            <i class="fas fa-users me-1"></i>
+            {{ teachers|length }} Pending
+          </span>
+        </div>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search teachers by name, contact, or address...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="statusFilter">
+                <option value="">All Status</option>
+                <option value="new">New Requests</option>
+                <option value="reviewed">Reviewed</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-outline-secondary w-100" type="button" id="refreshBtn">
+                <i class="fas fa-sync-alt me-1"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teachers Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="mb-0 text-dark fw-semibold">
+            <i class="fas fa-list me-2 text-primary"></i>
+            Teacher Applications
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          {% if teachers %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="teachersTable">
+              <thead class="table-light">
+                <tr>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-user me-1 text-primary"></i>
+                    Teacher Name
+                  </th>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-image me-1 text-primary"></i>
+                    Photo
+                  </th>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-phone me-1 text-primary"></i>
+                    Contact
+                  </th>
+                  <th class="border-0 py-3 px-4">
+                    <i class="fas fa-map-marker-alt me-1 text-primary"></i>
+                    Address
+                  </th>
+                  <th class="border-0 py-3 px-4 text-center">
+                    <i class="fas fa-cogs me-1 text-primary"></i>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in teachers %}
+                <tr class="align-middle">
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <div class="flex-shrink-0">
+                        <img src="{% static t.profile_pic.url %}" alt="Profile Pic" 
+                             class="rounded-circle" width="45" height="45"
+                             style="object-fit: cover; border: 2px solid #e9ecef;">
+                      </div>
+                      <div class="flex-grow-1 ms-3">
+                        <h6 class="mb-0 fw-semibold text-dark">{{ t.get_name }}</h6>
+                        <small class="text-muted">
+                          <i class="fas fa-calendar-alt me-1"></i>
+                          Applied recently
+                        </small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <img src="{% static t.profile_pic.url %}" alt="Profile Pic" 
+                         class="rounded" width="50" height="50"
+                         style="object-fit: cover; border: 1px solid #dee2e6;">
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-phone text-success me-2"></i>
+                      <span class="fw-medium">{{ t.mobile }}</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                      <span class="text-muted">{{ t.address|truncatechars:30 }}</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <div class="btn-group" role="group">
+                      <a href="{% url 'approve-teacher' t.id %}" 
+                         class="btn btn-success btn-sm px-3"
+                         title="Approve Teacher"
+                         onclick="return confirm('Are you sure you want to approve this teacher?')">
+                        <i class="fas fa-check me-1"></i>
+                        Approve
+                      </a>
+                      <a href="{% url 'reject-teacher' t.id %}" 
+                         class="btn btn-danger btn-sm px-3 ms-1"
+                         title="Reject Teacher"
+                         onclick="return confirm('Are you sure you want to reject this teacher?')">
+                        <i class="fas fa-times me-1"></i>
+                        Reject
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-users-slash text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h5 class="text-muted mb-2">No Pending Teachers</h5>
+            <p class="text-muted mb-4">All teacher applications have been processed.</p>
+            <a href="{% url 'admin-dashboard' %}" class="btn btn-primary">
+              <i class="fas fa-arrow-left me-1"></i>
+              Back to Dashboard
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      {% if teachers.has_other_pages %}
+      <nav aria-label="Teachers pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if teachers.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ teachers.previous_page_number }}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          {% endif %}
+          
+          {% for num in teachers.paginator.page_range %}
+          <li class="page-item {% if teachers.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endfor %}
+          
+          {% if teachers.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ teachers.next_page_number }}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filter JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const table = document.getElementById('teachersTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Refresh button
+    refreshBtn.addEventListener('click', function() {
+        location.reload();
+    });
+
+    // Add hover effects
+    rows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = '#f8f9fa';
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+});
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.input-group-text {
+    border-color: #dee2e6;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+</style>
+
+{% endblock content %}
