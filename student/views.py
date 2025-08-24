@@ -8,6 +8,7 @@ from django.conf import settings
 from datetime import date, timedelta
 from exam import models as QMODEL
 from teacher import models as TMODEL
+import json
 
 
 #for showing signup/login button for student
@@ -124,4 +125,32 @@ def check_marks_view(request,pk):
 def student_marks_view(request):
     courses=QMODEL.Course.objects.all()
     return render(request,'student/student_marks.html',{'courses':courses})
+
+@login_required(login_url='studentlogin')
+@user_passes_test(is_student)
+def report_cheating_view(request):
+    """Handle cheating violation reports from JavaScript"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            violation_type = data.get('violation_type')
+            course_id = request.COOKIES.get('course_id')
+            
+            if course_id and violation_type:
+                course = QMODEL.Course.objects.get(id=course_id)
+                student = models.Student.objects.get(user_id=request.user.id)
+                
+                # Create cheating attempt record
+                CheatingAttempt.objects.create(
+                    student=student,
+                    exam=course,
+                    violation_type=violation_type,
+                    description=data.get('description', '')
+                )
+                
+                return JsonResponse({'status': 'success', 'message': 'Violation recorded'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
   

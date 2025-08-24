@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,reverse
 from . import forms,models
 from django.db.models import Sum
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.conf import settings
 from datetime import date, timedelta
@@ -14,6 +14,7 @@ from student import models as SMODEL
 from teacher import forms as TFORM
 from student import forms as SFORM
 from django.contrib.auth.models import User
+from .models import CheatingAttempt
 
 
 
@@ -57,6 +58,8 @@ def admin_dashboard_view(request):
     'total_teacher':TMODEL.Teacher.objects.all().filter(status=True).count(),
     'total_course':models.Course.objects.all().count(),
     'total_question':models.Question.objects.all().count(),
+    'total_cheating_attempts':CheatingAttempt.objects.all().count(),
+    'recent_cheating_attempts':CheatingAttempt.objects.all().order_by('-timestamp')[:5],
     }
     return render(request,'exam/admin_dashboard.html',context=dict)
 
@@ -138,7 +141,7 @@ def approve_teacher_view(request,pk):
                 teacher.salary=teacherSalary.cleaned_data['salary']
                 teacher.status=True
                 teacher.save()
-                messages.success(request, f'Teacher {teacher.get_name()} has been approved successfully.')
+                messages.success(request, f'Teacher {teacher.get_name} has been approved successfully.')
             else:
                 print("form is invalid")
             return HttpResponseRedirect('/admin-view-pending-teacher')
@@ -377,5 +380,23 @@ def contactus_view(request):
             send_mail(str(name)+' || '+str(email),message,settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVING_USER, fail_silently = False)
             return render(request, 'exam/contactussuccess.html')
     return render(request, 'exam/contactus.html', {'form':sub})
+
+@login_required(login_url='adminlogin')
+def admin_view_cheating_attempts_view(request):
+    """Admin view to display all cheating attempts"""
+    cheating_attempts = CheatingAttempt.objects.all().order_by('-timestamp')
+    return render(request, 'exam/admin_view_cheating_attempts.html', {'cheating_attempts': cheating_attempts})
+
+@login_required(login_url='adminlogin')
+def delete_cheating_attempt_view(request, pk):
+    """Delete a specific cheating attempt"""
+    if request.method == 'POST':
+        try:
+            attempt = CheatingAttempt.objects.get(id=pk)
+            attempt.delete()
+            return JsonResponse({'status': 'success'})
+        except CheatingAttempt.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Attempt not found'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 

@@ -101,6 +101,32 @@
   </div>
 </div>
 
+<!-- Security Section -->
+<div class="row g-4 mb-5">
+  <!-- Cheating Attempts Card -->
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card bg-gradient-danger text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title mb-2">Security Violations</h6>
+            <h2 class="mb-0">{{total_cheating_attempts}}</h2>
+            <small class="opacity-75">Detected violations</small>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="admin-view-cheating-attempts" class="btn btn-light btn-sm w-100">
+          <i class="fas fa-eye me-2"></i>View Violations
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Quick Actions Section -->
 <div class="row g-4 mb-5">
   <div class="col-12">
@@ -227,11 +253,69 @@
             <span>Questions</span>
             <span class="badge bg-warning rounded-pill">{{total_question}}</span>
           </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+            <span>Security Violations</span>
+            <span class="badge bg-danger rounded-pill">{{total_cheating_attempts}}</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Recent Security Violations -->
+{% if recent_cheating_attempts %}
+<div class="row g-4 mb-5">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Recent Security Violations
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Exam</th>
+                <th>Violation Type</th>
+                <th>Description</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for attempt in recent_cheating_attempts %}
+              <tr>
+                <td>{{attempt.student.user.first_name}} {{attempt.student.user.last_name}}</td>
+                <td>{{attempt.exam.course_name}}</td>
+                <td>
+                  {% if attempt.violation_type == 'TAB_SWITCH' %}
+                    <span class="badge bg-warning">Tab Switch</span>
+                  {% elif attempt.violation_type == 'WINDOW_FOCUS_LOSS' %}
+                    <span class="badge bg-danger">Window Focus Loss</span>
+                  {% elif attempt.violation_type == 'COPY_PASTE' %}
+                    <span class="badge bg-info">Copy/Paste Attempt</span>
+                  {% endif %}
+                </td>
+                <td>{{attempt.description}}</td>
+                <td>{{attempt.timestamp|date:"M d, H:i"}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="text-center mt-3">
+          <a href="admin-view-cheating-attempts" class="btn btn-outline-danger">
+            <i class="fas fa-eye me-2"></i>View All Violations
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 
 <style>
   .stat-card {

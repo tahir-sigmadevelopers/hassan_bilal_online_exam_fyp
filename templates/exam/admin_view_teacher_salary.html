@@ -45,10 +45,10 @@
             <div class="card-body text-center p-4">
               <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
                    style="width: 60px; height: 60px;">
-                <i class="fas fa-dollar-sign text-success fs-3"></i>
+                <i class="fas fa-rupee-sign text-success fs-3"></i>
               </div>
               <h4 class="text-dark fw-bold mb-2">
-                ${% for teacher in teachers %}{% if forloop.first %}{{ teacher.salary }}{% else %}{% endif %}{% endfor %}
+                Rs {% for teacher in teachers %}{% if forloop.first %}{{ teacher.salary }}{% else %}{% endif %}{% endfor %}
               </h4>
               <p class="text-muted mb-0">Total Salary</p>
             </div>
@@ -62,7 +62,7 @@
                 <i class="fas fa-chart-line text-info fs-3"></i>
               </div>
               <h4 class="text-dark fw-bold mb-2">
-                ${% for teacher in teachers %}{% if forloop.first %}{{ teacher.salary|floatformat:0 }}{% else %}{% endif %}{% endfor %}
+                Rs {% for teacher in teachers %}{% if forloop.first %}{{ teacher.salary|floatformat:0 }}{% else %}{% endif %}{% endfor %}
               </h4>
               <p class="text-muted mb-0">Average Salary</p>
             </div>
@@ -85,9 +85,9 @@
             <div class="col-md-3">
               <select class="form-select" id="filterBy">
                 <option value="">All Teachers</option>
-                <option value="high">High Salary ($5000+)</option>
-                <option value="medium">Medium Salary ($3000-5000)</option>
-                <option value="low">Low Salary (<$3000)</option>
+                <option value="high">High Salary (Rs 5000+)</option>
+                <option value="medium">Medium Salary (Rs 3000-5000)</option>
+                <option value="low">Low Salary (<Rs 3000)</option>
               </select>
             </div>
             <div class="col-md-3">
@@ -127,7 +127,7 @@
                     Contact
                   </th>
                   <th class="border-0 py-3 px-4 text-center">
-                    <i class="fas fa-dollar-sign me-1 text-primary"></i>
+                    <i class="fas fa-rupee-sign me-1 text-primary"></i>
                     Salary
                   </th>
                   <th class="border-0 py-3 px-4 text-center">
@@ -153,7 +153,7 @@
                   <td class="px-4 py-3 text-center">
                     <div class="d-flex align-items-center justify-content-center">
                       <img src="{% static t.profile_pic.url %}" alt="Profile Pic" 
-                           class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;" />
+                           class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover; display: block; margin: 0 auto;" />
                     </div>
                   </td>
                   <td class="px-4 py-3 text-center">
@@ -167,8 +167,8 @@
                   <td class="px-4 py-3 text-center">
                     <div class="d-flex align-items-center justify-content-center">
                       <span class="badge bg-success text-white fs-6 px-3 py-2">
-                        <i class="fas fa-dollar-sign me-1"></i>
-                        ${{ t.salary }}
+                        <i class="fas fa-rupee-sign me-1"></i>
+                        Rs {{ t.salary }}
                       </span>
                     </div>
                   </td>
@@ -189,7 +189,7 @@
           <!-- Empty State -->
           <div class="text-center py-5">
             <div class="mb-4">
-              <i class="fas fa-dollar-sign text-muted" style="font-size: 4rem;"></i>
+              <i class="fas fa-rupee-sign text-muted" style="font-size: 4rem;"></i>
             </div>
             <h5 class="text-muted mb-2">No Teachers Found</h5>
             <p class="text-muted mb-4">There are no teachers with salary information available.</p>
@@ -211,7 +211,7 @@
               <h6 class="text-dark fw-semibold mb-3">Salary Distribution</h6>
               <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="text-muted">High Salary ($5000+)</span>
+                  <span class="text-muted">High Salary (Rs 5000+)</span>
                   <span class="badge bg-success" id="highSalary">0</span>
                 </div>
                 <div class="progress" style="height: 8px;">
@@ -220,7 +220,7 @@
               </div>
               <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="text-muted">Medium Salary ($3000-5000)</span>
+                  <span class="text-muted">Medium Salary (Rs 3000-5000)</span>
                   <span class="badge bg-warning" id="mediumSalary">0</span>
                 </div>
                 <div class="progress" style="height: 8px;">
@@ -229,7 +229,7 @@
               </div>
               <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="text-muted">Low Salary (<$3000)</span>
+                  <span class="text-muted">Low Salary (<Rs 3000)</span>
                   <span class="badge bg-danger" id="lowSalary">0</span>
                 </div>
                 <div class="progress" style="height: 8px;">
@@ -249,7 +249,7 @@
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="mb-1 fw-semibold">{{ teacher.get_name }}</h6>
-                      <small class="text-muted">Salary: ${{ teacher.salary }}</small>
+                      <small class="text-muted">Salary: Rs {{ teacher.salary }}</small>
                     </div>
                     <span class="badge bg-primary">Active</span>
                   </div>
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
         rows.forEach(row => {
             const salaryElement = row.querySelector('.badge');
             if (salaryElement) {
-                const salary = parseFloat(salaryElement.textContent.replace('$', ''));
+                const salary = parseFloat(salaryElement.textContent.replace('Rs ', ''));
                 let show = true;
                 
                 if (filterValue === 'high' && salary < 5000) show = false;

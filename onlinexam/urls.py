@@ -50,5 +50,9 @@ urlpatterns = [
     path('view-question/<int:pk>', views.view_question_view,name='view-question'),
     path('delete-question/<int:pk>', views.delete_question_view,name='delete-question'),
 
+    # Cheating attempts management
+    path('admin-view-cheating-attempts', views.admin_view_cheating_attempts_view,name='admin-view-cheating-attempts'),
+    path('admin/delete-cheating-attempt/<int:pk>', views.delete_cheating_attempt_view,name='delete-cheating-attempt'),
+
 
 ]

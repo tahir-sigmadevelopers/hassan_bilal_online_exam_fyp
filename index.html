@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works - Step 01</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #ccc;
+        }
+
+        .step {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0 50px;
+        }
+
+        .step span {
+            color: #fff676;
+        }
+
+        /* Timeline Line */
+        .timeline {
+            position: relative;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            background-color: #fff676;
+            transform: translateX(-50%);
+        }
+
+        /* Timeline Item */
+        .timeline-item {
+            position: relative;
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .timeline-item.left {
+            left: 0;
+            text-align: right;
+        }
+
+        .timeline-item.right {
+            left: 50%;
+            text-align: left;
+        }
+
+        /* Connecting dot */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            width: 15px;
+            height: 15px;
+            background-color: #fff676;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item.left::before {
+            right: -8px;
+        }
+
+        .timeline-item.right::before {
+            left: -8px;
+        }
+
+        /* Card Style */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: inline-block;
+            max-width: 90%;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .checklist li {
+            margin: 8px 0;
+            position: relative;
+            padding-left: 25px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .checklist li::before {
+            content: "✔";
+            position: absolute;
+            left: 0;
+            color: #7fff7f;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 8px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 30px;
+                padding-right: 0;
+                text-align: left !important;
+            }
+
+            .timeline-item.left,
+            .timeline-item.right {
+                left: 0;
+            }
+
+            .timeline-item::before {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="section-title">HOW IT WORKS</div>
+        <div class="step">STEP <span>01</span></div>
+
+        <div class="timeline">
+            <!-- Step 1 -->
+            <div class="timeline-item left">
+                <div class="card">
+                    <h3>🧠🔥 Strategic Onboarding & Growth Blueprint</h3>
+                    <p>We dive deep into your business model, search landscape, and customer journey to design a
+                        data-backed, AI-enhanced strategy from day one.</p>
+                    <ul class="checklist">
+                        <li>Onboarding Sprint (1–2 weeks): We immerse ourselves in your market, competitors, and growth
+                            potential.</li>
+                        <li>Full-Funnel SEO + Ads Audit: From technical SEO to ad spend performance, we surface gaps,
+                            wins, and opportunities.</li>
+                        <li>Custom Growth Roadmap: You get a tailored, channel-integrated strategy built for measurable
+                            business outcomes.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="timeline-item right">
+                <div class="card">
+                    <h3>🚀📝 Deploy the Search Growth Engine</h3>
+                    <p>We execute a performance-driven strategy across SEO, Google Ads, and AI Search—working as one
+                        unified system to drive results.</p>
+                    <ul class="checklist">
+                        <li>High-Intent SEO Execution: On-page, technical, and AI-optimized content focused on traffic
+                            that converts.</li>
+                        <li>Paid Search Campaigns: Google Search, Shopping, and PMax ads launched and optimized for ROAS
+                            and POAS.</li>
+                        <li>AI Search Visibility: We prepare and optimize your brand for platforms like SGE, Perplexity,
+                            and ChatGPT.</li>
+                    </ul>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+</body>
+
+</html>

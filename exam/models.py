@@ -25,3 +25,20 @@ class Result(models.Model):
     marks = models.PositiveIntegerField()
     date = models.DateTimeField(auto_now=True)
 
+class CheatingAttempt(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Course, on_delete=models.CASCADE)
+    violation_type = models.CharField(max_length=50, choices=[
+        ('TAB_SWITCH', 'Tab Switch'),
+        ('WINDOW_FOCUS_LOSS', 'Window Focus Loss'),
+        ('COPY_PASTE', 'Copy Paste Attempt'),
+    ])
+    timestamp = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True)
+    
+    class Meta:
+        ordering = ['-timestamp']
+    
+    def __str__(self):
+        return f"{self.student.user.username} - {self.exam.course_name} - {self.violation_type}"
+

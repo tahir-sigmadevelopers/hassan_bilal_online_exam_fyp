@@ -5,15 +5,81 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
-
+    <style>
+        .warning-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            z-index: 9999;
+            display: none;
+            font-weight: bold;
+        }
+        
+        .exam-container {
+            margin-top: 60px;
+        }
+        
+        .warning-count {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #ff4444;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            z-index: 10000;
+            font-weight: bold;
+        }
+        
+        .fullscreen-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ff4444;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10001;
+            display: none;
+            text-align: center;
+        }
+    </style>
 </head>
 
+<!-- Warning Banner -->
+<div class="warning-banner" id="warningBanner">
+    ⚠️ WARNING: Tab switching detected! This is a violation of exam rules.
+</div>
 
-<div class="jumbotron my-4">
+<!-- Warning Counter -->
+<div class="warning-count" id="warningCount">
+    Violations: <span id="violationCount">0</span>
+</div>
+
+<!-- Fullscreen Warning -->
+<div class="fullscreen-warning" id="fullscreenWarning">
+    <h4>⚠️ Fullscreen Required</h4>
+    <p>This exam must be taken in fullscreen mode for security reasons.</p>
+    <button class="btn btn-light" onclick="requestFullscreen()">Enter Fullscreen</button>
+</div>
+
+<div class="jumbotron my-4 exam-container">
 
     <form class="form" autocomplete="off" onsubmit="return saveAns()" action="/student/calculate-marks" method="POST">
         {% csrf_token %}
         <h2 style="text-align: center;">Course: {{course.course_name}}</h2>
+        
+        <!-- Anti-cheating notice -->
+        <div class="alert alert-warning" role="alert">
+            <strong>⚠️ Exam Security Notice:</strong> This exam is monitored for security. Tab switching, window switching, and copy-paste actions are prohibited and will be recorded as violations.
+        </div>
+        
         {% for q in questions%}
         <div class="d-flex w-100 align-items-center">
             <div class="col-auto flex-shrink-1 flex-grow-1">
@@ -63,8 +129,198 @@
 </div>
 
 <script>
-    function saveAns() {
+    // Anti-cheating variables
+    let violationCount = 0;
+    let isFullscreen = false;
+    let lastFocusTime = Date.now();
+    let warningTimeout;
+    
+    // Initialize anti-cheating features
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeAntiCheating();
+        checkFullscreen();
+    });
+    
+    function initializeAntiCheating() {
+        // Tab visibility change detection
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        
+        // Window focus/blur detection
+        window.addEventListener('focus', handleWindowFocus);
+        window.addEventListener('blur', handleWindowBlur);
+        
+        // Prevent copy-paste
+        document.addEventListener('copy', preventCopyPaste);
+        document.addEventListener('paste', preventCopyPaste);
+        document.addEventListener('cut', preventCopyPaste);
+        
+        // Prevent right-click context menu
+        document.addEventListener('contextmenu', preventRightClick);
+        
+        // Prevent keyboard shortcuts
+        document.addEventListener('keydown', preventKeyboardShortcuts);
+        
+        // Prevent drag and drop
+        document.addEventListener('dragstart', preventDragDrop);
+        document.addEventListener('drop', preventDragDrop);
+        
+        // Monitor mouse leaving window
+        document.addEventListener('mouseleave', handleMouseLeave);
+        
+        // Periodic focus check
+        setInterval(checkFocus, 1000);
+    }
+    
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            reportViolation('TAB_SWITCH', 'Tab switch detected');
+        }
+    }
+    
+    function handleWindowFocus() {
+        lastFocusTime = Date.now();
+        hideWarningBanner();
+    }
+    
+    function handleWindowBlur() {
+        reportViolation('WINDOW_FOCUS_LOSS', 'Window focus lost');
+    }
+    
+    function handleMouseLeave(event) {
+        if (event.clientY <= 0) {
+            reportViolation('WINDOW_FOCUS_LOSS', 'Mouse left window area');
+        }
+    }
+    
+    function preventCopyPaste(event) {
+        event.preventDefault();
+        reportViolation('COPY_PASTE', 'Copy/paste attempt detected');
+        return false;
+    }
+    
+    function preventRightClick(event) {
+        event.preventDefault();
+        reportViolation('COPY_PASTE', 'Right-click context menu attempt');
+        return false;
+    }
+    
+    function preventKeyboardShortcuts(event) {
+        // Prevent common shortcuts
+        const forbiddenKeys = [
+            'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',
+            'Tab', 'Escape'
+        ];
+        
+        const forbiddenCombos = [
+            {ctrl: true, key: 'c'}, // Copy
+            {ctrl: true, key: 'v'}, // Paste
+            {ctrl: true, key: 'x'}, // Cut
+            {ctrl: true, key: 'a'}, // Select all
+            {ctrl: true, key: 'z'}, // Undo
+            {ctrl: true, key: 'y'}, // Redo
+            {ctrl: true, key: 'f'}, // Find
+            {ctrl: true, key: 'u'}, // View source
+            {alt: true, key: 'Tab'}, // Switch tabs
+            {alt: true, key: 'F4'}, // Close window
+        ];
+        
+        // Check for forbidden keys
+        if (forbiddenKeys.includes(event.key)) {
+            event.preventDefault();
+            reportViolation('COPY_PASTE', `Forbidden key pressed: ${event.key}`);
+            return false;
+        }
+        
+        // Check for forbidden combinations
+        for (let combo of forbiddenCombos) {
+            if (event.ctrlKey === combo.ctrl && event.altKey === combo.alt && 
+                event.key.toLowerCase() === combo.key) {
+                event.preventDefault();
+                reportViolation('COPY_PASTE', `Forbidden keyboard shortcut: ${event.key}`);
+                return false;
+            }
+        }
+    }
+    
+    function preventDragDrop(event) {
+        event.preventDefault();
+        return false;
+    }
+    
+    function checkFocus() {
+        if (!document.hasFocus()) {
+            reportViolation('WINDOW_FOCUS_LOSS', 'Window lost focus');
+        }
+    }
+    
+    function reportViolation(type, description) {
+        violationCount++;
+        document.getElementById('violationCount').textContent = violationCount;
+        
+        // Show warning banner
+        showWarningBanner();
+        
+        // Send violation to server
+        fetch('/student/report-cheating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                violation_type: type,
+                description: description
+            })
+        }).catch(error => {
+            console.error('Error reporting violation:', error);
+        });
+        
+        // Auto-hide warning after 5 seconds
+        clearTimeout(warningTimeout);
+        warningTimeout = setTimeout(hideWarningBanner, 5000);
+    }
+    
+    function showWarningBanner() {
+        document.getElementById('warningBanner').style.display = 'block';
+    }
+    
+    function hideWarningBanner() {
+        document.getElementById('warningBanner').style.display = 'none';
+    }
+    
+    function checkFullscreen() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+            !document.mozFullScreenElement && !document.msFullscreenElement) {
+            document.getElementById('fullscreenWarning').style.display = 'block';
+        } else {
+            document.getElementById('fullscreenWarning').style.display = 'none';
+            isFullscreen = true;
+        }
+    }
+    
+    function requestFullscreen() {
+        const elem = document.documentElement;
+        
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+        
+        setTimeout(checkFullscreen, 100);
+    }
+    
+    // Monitor fullscreen changes
+    document.addEventListener('fullscreenchange', checkFullscreen);
+    document.addEventListener('webkitfullscreenchange', checkFullscreen);
+    document.addEventListener('mozfullscreenchange', checkFullscreen);
+    document.addEventListener('MSFullscreenChange', checkFullscreen);
 
+    function saveAns() {
         var ele = document.getElementsByTagName('input');
         for (i = 0; i < ele.length; i++) {
             if (ele[i].type = "radio") {
@@ -73,7 +329,6 @@
                 }
             }
         }
-
     }
 
     function setCookie(cname, cvalue, exdays) {

@@ -55,11 +55,11 @@
                     <i class="fas fa-money-bill text-success"></i>
                   </span>
                   {% render_field teacherSalary.salary class="form-control border-start-0" placeholder="Enter monthly salary amount" %}
-                  <span class="input-group-text bg-light border-start-0">USD</span>
+                  <span class="input-group-text bg-light border-start-0">PKR</span>
                 </div>
                 <div class="form-text">
                   <i class="fas fa-info-circle me-1"></i>
-                  Enter the monthly salary amount in USD
+                  Enter the monthly salary amount in PKR
                 </div>
               </div>
             </div>
@@ -181,9 +181,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const quarterly = salary * 3;
         const yearly = salary * 12;
 
-        monthlySalary.textContent = `$${monthly.toLocaleString()}`;
-        quarterlySalary.textContent = `$${quarterly.toLocaleString()}`;
-        yearlySalary.textContent = `$${yearly.toLocaleString()}`;
+        monthlySalary.textContent = `Rs ${monthly.toLocaleString()}`;
+        quarterlySalary.textContent = `Rs ${quarterly.toLocaleString()}`;
+        yearlySalary.textContent = `Rs ${yearly.toLocaleString()}`;
     }
 
     // Add event listener for real-time updates
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (salary > 100000) {
-            if (!confirm('Are you sure you want to set a salary above $100,000?')) {
+            if (!confirm('Are you sure you want to set a salary above Rs 100,000?')) {
                 e.preventDefault();
                 return;
             }

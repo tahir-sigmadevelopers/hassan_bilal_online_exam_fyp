@@ -41,6 +41,25 @@
                             <li>You will be able to view marks immediately once after you submit the answer.</li>
                         </ul>
                     <p></p>
+
+                    <h4 class="card-title text-danger">⚠️ Security Rules :</h4>
+                    <p class="card-text">
+                        </p><ul style="list-style:decimal;">
+                            <li><strong>Fullscreen Mode Required:</strong> The exam must be taken in fullscreen mode.</li>
+                            <li><strong>No Tab Switching:</strong> Switching to other browser tabs is strictly prohibited and will be recorded as a violation.</li>
+                            <li><strong>No Window Switching:</strong> Switching to other applications or windows is not allowed.</li>
+                            <li><strong>No Copy-Paste:</strong> Copying, pasting, or cutting text is disabled during the exam.</li>
+                            <li><strong>No Right-Click:</strong> Right-click context menu is disabled.</li>
+                            <li><strong>No Keyboard Shortcuts:</strong> Function keys and common shortcuts (Ctrl+C, Ctrl+V, etc.) are disabled.</li>
+                            <li><strong>Violation Tracking:</strong> All security violations are automatically recorded and reported to administrators.</li>
+                            <li><strong>Multiple Violations:</strong> Repeated violations may result in exam disqualification.</li>
+                        </ul>
+                    <p></p>
+
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Important:</strong> By clicking "Enter Examination", you acknowledge that you understand and agree to follow all security rules. The system will monitor your activity throughout the exam.
+                    </div>
+
                     <a href="{% url 'start-exam' course.id  %}" class="btn btn-primary btn-lg" style="border-radius:0px;">Enter Examination</a>
                 </div>  
                 <div class="card-footer">Best Of Luck, Students!</div>  
