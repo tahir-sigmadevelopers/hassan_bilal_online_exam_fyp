@@ -19,36 +19,263 @@
     .row {
       margin: 100px;
     }
+    
+    .marks-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .marks-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .marks-body {
+      padding: 20px;
+    }
+    
+    .marks-table {
+      margin-bottom: 0;
+    }
+    
+    .marks-table th {
+      background: #f8f9fa;
+      border-top: none;
+      font-weight: 600;
+    }
+    
+    .marks-table td {
+      vertical-align: middle;
+    }
+    
+    .score-badge {
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .score-excellent {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .score-good {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    
+    .score-average {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .score-poor {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    
+    .percentage-badge {
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    
+    .percentage-excellent {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .percentage-good {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    
+    .percentage-average {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .percentage-poor {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+    }
+    
+    .no-results i {
+      font-size: 48px;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+    
+    .stats-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+    }
+    
+    .stats-number {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .stats-label {
+      font-size: 12px;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <br><br>
 <div class="container">
-  <div class="panel panel-primary rounded-0">
-    <div class="panel-heading rounded-0">
-      <h6 class="panel-title">My Marks</h6>
+  <div class="marks-card">
+    <div class="marks-header">
+      <h4><i class="fas fa-chart-line"></i> My Exam Results</h4>
+      <p class="mb-0">Detailed performance analysis for {{course.course_name}}</p>
     </div>
-    <table class="table table-hover table-bordered" id="dev-table">
-      <thead>
-        <tr>
-
-          <th>Course</th>
-          <th>Total Marks</th>
-          <th>Number of Attempts</th>
-          <th>Exam Date</th>
-        </tr>
-      </thead>
-      {% for t in results %}
-      <tr>
-
-        <td> {{t.exam}}</td>
-        <td> {{t.marks}}</td>
-        <td>Attempt {{ forloop.counter }}</td>
-        <td> {{t.date}}</td>
+    
+    <div class="marks-body">
+      {% if results %}
+        <div class="table-responsive">
+          <table class="table table-hover marks-table">
+            <thead>
+              <tr>
+                <th>Course/Exam</th>
+                <th>Marks Obtained</th>
+                <th>Total Possible</th>
+                <th>Percentage</th>
+                <th>Performance</th>
+                <th>Attempt Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for result_data in results_with_stats %}
+              <tr>
+                <td>
+                  <strong>{{result_data.result.exam.course_name}}</strong>
+                </td>
+                <td>
+                  <span class="score-badge 
+                    {% if result_data.result.marks >= 80 %}score-excellent
+                    {% elif result_data.result.marks >= 60 %}score-good
+                    {% elif result_data.result.marks >= 40 %}score-average
+                    {% else %}score-poor{% endif %}">
+                    {{result_data.result.marks}} marks
+                  </span>
+                </td>
+                <td>
+                  <strong>{{result_data.total_possible_marks}} marks</strong>
+                </td>
+                <td>
+                  <span class="percentage-badge 
+                    {% if result_data.percentage >= 80 %}percentage-excellent
+                    {% elif result_data.percentage >= 60 %}percentage-good
+                    {% elif result_data.percentage >= 40 %}percentage-average
+                    {% else %}percentage-poor{% endif %}">
+                    {{result_data.percentage}}%
+                  </span>
+                </td>
+                <td>
+                  {% if result_data.percentage >= 80 %}
+                    <span class="text-success"><i class="fas fa-star"></i> Excellent</span>
+                  {% elif result_data.percentage >= 60 %}
+                    <span class="text-info"><i class="fas fa-thumbs-up"></i> Good</span>
+                  {% elif result_data.percentage >= 40 %}
+                    <span class="text-warning"><i class="fas fa-meh"></i> Average</span>
+                  {% else %}
+                    <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Needs Improvement</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <small>{{result_data.result.date|date:"M d, Y H:i"}}</small>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
         
+        <!-- Summary Statistics -->
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number text-primary">{{total_attempts}}</div>
+              <div class="stats-label">Total Attempts</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number text-success">{{total_obtained_marks}}</div>
+              <div class="stats-label">Total Marks</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number text-info">{{average_score}}</div>
+              <div class="stats-label">Average Score</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number text-warning">{{latest_score}}</div>
+              <div class="stats-label">Latest Score</div>
+            </div>
+          </div>
+        </div>
         
-      </tr>
-      {% endfor %}
-    </table>
+        <!-- Performance Summary -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="card border-0 bg-light">
+              <div class="card-body">
+                <h6 class="card-title text-center mb-3">
+                  <i class="fas fa-chart-pie text-primary"></i> Performance Summary
+                </h6>
+                <div class="row text-center">
+                  <div class="col-md-4">
+                    <h5 class="text-success">{{total_possible_marks}}</h5>
+                    <small class="text-muted">Total Possible Marks</small>
+                  </div>
+                  <div class="col-md-4">
+                    <h5 class="text-primary">{{total_obtained_marks}}</h5>
+                    <small class="text-muted">Total Obtained Marks</small>
+                  </div>
+                  <div class="col-md-4">
+                    <h5 class="text-info">{{overall_percentage}}%</h5>
+                    <small class="text-muted">Overall Percentage</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      {% else %}
+        <div class="no-results">
+          <i class="fas fa-clipboard-list"></i>
+          <h5>No Results Found</h5>
+          <p>You haven't taken any exams for {{course.course_name}} yet.</p>
+          <a href="/student/student-exam" class="btn btn-primary">
+            <i class="fas fa-play"></i> Take an Exam
+          </a>
+        </div>
+      {% endif %}
+    </div>
   </div>
 </div>
 

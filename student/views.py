@@ -58,23 +58,39 @@ def student_exam_view(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def take_exam_view(request,pk):
-    course=QMODEL.Course.objects.get(id=pk)
-    total_questions=QMODEL.Question.objects.all().filter(course=course).count()
-    questions=QMODEL.Question.objects.all().filter(course=course)
-    total_marks=0
-    for q in questions:
-        total_marks=total_marks + q.marks
+    course = QMODEL.Course.objects.get(id=pk)
+    total_questions = QMODEL.Question.objects.all().filter(course=course).count()
+    questions = QMODEL.Question.objects.all().filter(course=course)
+    total_marks = 0
     
-    return render(request,'student/take_exam.html',{'course':course,'total_questions':total_questions,'total_marks':total_marks})
+    for q in questions:
+        total_marks = total_marks + q.marks
+    
+    return render(request,'student/take_exam.html',{
+        'course': course,
+        'total_questions': total_questions,
+        'total_marks': total_marks,
+        'questions': questions
+    })
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def start_exam_view(request,pk):
     course=QMODEL.Course.objects.get(id=pk)
     questions=QMODEL.Question.objects.all().filter(course=course)
+    
+    # Calculate total marks
+    total_marks = 0
+    for question in questions:
+        total_marks += question.marks
+    
     if request.method=='POST':
         pass
-    response= render(request,'student/start_exam.html',{'course':course,'questions':questions})
+    response= render(request,'student/start_exam.html',{
+        'course':course,
+        'questions':questions,
+        'total_marks': total_marks
+    })
     response.set_cookie('course_id',course.id)
     return response
 
@@ -84,24 +100,40 @@ def start_exam_view(request,pk):
 def calculate_marks_view(request):
     if request.COOKIES.get('course_id') is not None:
         course_id = request.COOKIES.get('course_id')
-        course=QMODEL.Course.objects.get(id=course_id)
+        course = QMODEL.Course.objects.get(id=course_id)
         
-        total_marks=0
-        questions=QMODEL.Question.objects.all().filter(course=course)
-        for i in range(len(questions)):
+        total_marks = 0
+        questions = QMODEL.Question.objects.all().filter(course=course)
+        
+        for i, question in enumerate(questions):
+            # Try both old and new cookie naming formats
+            selected_ans = request.COOKIES.get(f'q{i+1}') or request.COOKIES.get(str(i+1))
+            actual_answer = question.answer
             
-            selected_ans = request.COOKIES.get(str(i+1))
-            actual_answer = questions[i].answer
             if selected_ans == actual_answer:
-                total_marks = total_marks + questions[i].marks
+                total_marks = total_marks + question.marks
+        
         student = models.Student.objects.get(user_id=request.user.id)
-        result = QMODEL.Result()
-        result.marks=total_marks
-        result.exam=course
-        result.student=student
-        result.save()
+        
+        # Check if result already exists for this student and course
+        existing_result = QMODEL.Result.objects.filter(student=student, exam=course).first()
+        
+        if existing_result:
+            # Update existing result
+            existing_result.marks = total_marks
+            existing_result.save()
+        else:
+            # Create new result
+            result = QMODEL.Result()
+            result.marks = total_marks
+            result.exam = course
+            result.student = student
+            result.save()
 
         return HttpResponseRedirect('view-result')
+    else:
+        # Redirect to exam selection if no course_id found
+        return HttpResponseRedirect('student-exam')
 
 
 
@@ -118,7 +150,52 @@ def check_marks_view(request,pk):
     course=QMODEL.Course.objects.get(id=pk)
     student = models.Student.objects.get(user_id=request.user.id)
     results= QMODEL.Result.objects.all().filter(exam=course).filter(student=student)
-    return render(request,'student/check_marks.html',{'results':results})
+    
+    # Calculate total possible marks for this course
+    total_possible_marks = 0
+    questions = QMODEL.Question.objects.all().filter(course=course)
+    for question in questions:
+        total_possible_marks += question.marks
+    
+    # Calculate statistics for each result
+    results_with_stats = []
+    for result in results:
+        percentage = 0
+        if total_possible_marks > 0:
+            percentage = (result.marks / total_possible_marks) * 100
+        
+        results_with_stats.append({
+            'result': result,
+            'total_possible_marks': total_possible_marks,
+            'percentage': round(percentage, 1)
+        })
+    
+    # Calculate overall statistics
+    total_attempts = len(results)
+    total_obtained_marks = sum(result.marks for result in results)
+    average_score = 0
+    if total_attempts > 0:
+        average_score = total_obtained_marks / total_attempts
+    latest_score = results.first().marks if results.exists() else 0
+    
+    # Calculate overall percentage
+    overall_percentage = 0
+    if total_possible_marks > 0 and total_attempts > 0:
+        overall_percentage = (total_obtained_marks / (total_possible_marks * total_attempts)) * 100
+    
+    context = {
+        'results': results,
+        'results_with_stats': results_with_stats,
+        'total_possible_marks': total_possible_marks,
+        'total_attempts': total_attempts,
+        'total_obtained_marks': total_obtained_marks,
+        'average_score': round(average_score, 1),
+        'latest_score': latest_score,
+        'overall_percentage': round(overall_percentage, 1),
+        'course': course
+    }
+    
+    return render(request,'student/check_marks.html', context)
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)

@@ -15,9 +15,21 @@
             color: white;
             text-align: center;
             padding: 10px;
-            z-index: 9999;
+            z-index: 10000;
             display: none;
             font-weight: bold;
+        }
+        
+        .warning-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 68, 68, 0.1);
+            z-index: 9999;
+            display: none;
+            pointer-events: auto;
         }
         
         .exam-container {
@@ -32,311 +44,949 @@
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
-            z-index: 10000;
+            z-index: 10001;
             font-weight: bold;
         }
         
-        .fullscreen-warning {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #ff4444;
+
+        
+        .exam-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
             border-radius: 10px;
-            z-index: 10001;
-            display: none;
+            margin-bottom: 30px;
+        }
+        
+        .question-container {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+        
+        .question-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .option-container {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+            user-select: none;
+        }
+        
+        .option-container * {
+            pointer-events: none;
+        }
+        
+        .option-container input[type="radio"] {
+            pointer-events: auto;
+        }
+        
+        .option-container:hover {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        
+        .option-container.selected {
+            border-color: #667eea;
+            background-color: #e3f2fd;
+        }
+        
+        .option-container input[type="radio"] {
+            margin-right: 10px;
+            position: relative;
+            z-index: 15;
+        }
+        
+        .exam-timer {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            z-index: 10003;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: #e0e0e0;
+            z-index: 10004;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10003;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .question-counter {
             text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .question-page {
+            display: none;
+        }
+        
+        .question-page.active {
+            display: block;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .timer-warning {
+            background: #ffc107;
+            color: #856404;
+        }
+        
+        .timer-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        /* Disable interactions when warnings are active */
+        .exam-disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .exam-disabled .option-container {
+            cursor: not-allowed;
+        }
+        
+        /* Simple hover effect for options */
+        .option-container:hover {
+            background-color: #f8f9ff;
+            border-color: #667eea;
+        }
+        
+        /* Tab Switch Warning */
+        .tab-switch-warning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-weight: bold;
+            z-index: 10005;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease;
+        }
+        
+        .warning-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .warning-content i {
+            font-size: 20px;
+            color: #ffeb3b;
+        }
+        
+        /* Exam Cancellation */
+        .exam-cancellation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(220, 53, 69, 0.1));
+            z-index: 10006;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            backdrop-filter: blur(10px);
+            transform: translateZ(0);
+        }
+        
+        .cancellation-content {
+            text-align: center;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(220, 53, 69, 0.4);
+            max-width: 550px;
+            width: 90%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin: auto;
+            transform: translate(-50%, -50%);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+        
+        .cancellation-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffeb3b, #ffc107, #ffeb3b);
+            animation: shimmer 2s infinite;
+        }
+        
+        .cancellation-content i {
+            font-size: 64px;
+            margin-bottom: 25px;
+            color: #ffeb3b;
+            text-shadow: 0 2px 10px rgba(255, 235, 59, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        .cancellation-content h4 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .cancellation-content p {
+            margin-bottom: 15px;
+            font-size: 18px;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+        
+        .cancellation-content small {
+            font-size: 14px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 
-<!-- Warning Banner -->
-<div class="warning-banner" id="warningBanner">
-    ⚠️ WARNING: Tab switching detected! This is a violation of exam rules.
+<!-- Progress Bar -->
+<div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
 </div>
 
-<!-- Warning Counter -->
-<div class="warning-count" id="warningCount">
-    Violations: <span id="violationCount">0</span>
+<!-- Progress Text -->
+<div class="progress-text" id="progressText" style="display: none;">
+    Progress: <span id="progressCount">0/0</span> questions answered
 </div>
 
-<!-- Fullscreen Warning -->
-<div class="fullscreen-warning" id="fullscreenWarning">
-    <h4>⚠️ Fullscreen Required</h4>
-    <p>This exam must be taken in fullscreen mode for security reasons.</p>
-    <button class="btn btn-light" onclick="requestFullscreen()">Enter Fullscreen</button>
+<!-- Tab Switch Warning -->
+<div class="tab-switch-warning" id="tabSwitchWarning">
+    <div class="warning-content">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>⚠️ Tab Switch Detected!</strong>
+        <p>Warning <span id="warningCount">1</span> of 2. Multiple tab switches will cancel the exam.</p>
+    </div>
 </div>
 
-<div class="jumbotron my-4 exam-container">
+<!-- Exam Cancellation -->
+<div class="exam-cancellation" id="examCancellation">
+    <div class="cancellation-content">
+        <i class="fas fa-shield-alt"></i>
+        <h4>🚫 Exam Terminated</h4>
+        <p id="cancellationReason">Security violation detected.</p>
+        <div style="margin: 20px 0; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 10px;">
+            <p style="margin: 0; font-size: 16px;">
+                <i class="fas fa-exclamation-triangle" style="color: #ffeb3b; margin-right: 8px;"></i>
+                <strong>What happened?</strong>
+            </p>
+            <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">
+                Multiple tab switches or security violations were detected during your exam session.
+            </p>
+        </div>
+        <p><small><i class="fas fa-clock"></i> Redirecting to exam selection in <span id="redirectCountdown">5</span> seconds...</small></p>
+    </div>
+</div>
 
-    <form class="form" autocomplete="off" onsubmit="return saveAns()" action="/student/calculate-marks" method="POST">
+<!-- Exam Timer -->
+<div class="exam-timer" id="examTimer">
+    Time Remaining: <span id="timeRemaining">01:00</span>
+</div>
+
+<div class="jumbotron my-4 exam-container" id="examContent">
+    <form class="form" autocomplete="off" id="examForm" action="/student/calculate-marks" method="POST">
         {% csrf_token %}
-        <h2 style="text-align: center;">Course: {{course.course_name}}</h2>
         
-        <!-- Anti-cheating notice -->
-        <div class="alert alert-warning" role="alert">
-            <strong>⚠️ Exam Security Notice:</strong> This exam is monitored for security. Tab switching, window switching, and copy-paste actions are prohibited and will be recorded as violations.
+        <div class="exam-header">
+            <h2 style="text-align: center; margin-bottom: 10px;">{{course.course_name}}</h2>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <strong>Total Questions:</strong> {{questions|length}}
+                </div>
+                <div class="col-md-4">
+                    <strong>Total Marks:</strong> {{total_marks}}
+                </div>
+                <div class="col-md-4">
+                    <strong>Time Per Question:</strong> 1 minute
+                </div>
+            </div>
         </div>
         
-        {% for q in questions%}
-        <div class="d-flex w-100 align-items-center">
-            <div class="col-auto flex-shrink-1 flex-grow-1">
-                <h3 class="">{{ forloop.counter }}. {{q.question}}</h3>
+        <!-- Tab Switching Warning -->
+        <div class="alert alert-danger" role="alert" style="margin-bottom: 20px;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2" style="font-size: 20px;"></i>
+                <div>
+                    <strong>⚠️ IMPORTANT: Tab Switching is NOT Allowed!</strong>
+                    <p class="mb-0 mt-1">
+                        <strong>Security Rules:</strong>
+                        • Do NOT switch tabs or windows during the exam
+                        • Do NOT use Alt+Tab or Ctrl+Tab
+                        • Do NOT minimize the browser window
+                        • Do NOT click outside the exam window
+                        <br>
+                        <strong>Consequences:</strong> Multiple tab switches will automatically cancel your exam and redirect you to the exam selection page.
+                    </p>
+                </div>
             </div>
-            <div class="col-auto">
-                <h4 style="text-align: right;">[{{q.marks}} Marks]</h4>
+            <div class="mt-2">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i> 
+                    Tab switching detection is active. Try switching tabs to test the security system.
+                </small>
             </div>
         </div>
-        <input type="hidden" name="csrfmiddlewaretoken" value="C24rUotmdHawVQJL3KrqiWxvti8UffOFYUc8TRbZtLt36AVLdP3jbkzUVe3beRAa">
+        
 
-
-        <div class="form-check mx-4 d-flex align-items-center">
-            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option1}}" value="Option1">
-            <label class="form-check-label ml-3" for="option1">
-              {{q.option1}}
-            </label>
+        
+        <!-- Question Pages -->
+        {% for q in questions %}
+        <div class="question-page {% if forloop.first %}active{% endif %}" id="question-page-{{forloop.counter}}">
+            <div class="question-counter">
+                Question {{forloop.counter}} of {{questions|length}}
+            </div>
+            
+            <div class="question-container">
+                <div class="d-flex align-items-start">
+                    <div class="question-number">{{forloop.counter}}</div>
+                    <div class="flex-grow-1">
+                        <h4 class="mb-3">{{q.question}}</h4>
+                        <div class="text-muted mb-3">
+                            <strong>Marks:</strong> {{q.marks}} | 
+                            <strong>Question Type:</strong> Multiple Choice
+                        </div>
+                        
+                        <div class="options-container">
+                            <div class="option-container" data-question="{{forloop.counter}}" data-option="Option1">
+                                <input type="radio" name="q{{forloop.counter}}" value="Option1" id="q{{forloop.counter}}_opt1">
+                                <label for="q{{forloop.counter}}_opt1" class="mb-0">{{q.option1}}</label>
+                            </div>
+                            
+                            <div class="option-container" data-question="{{forloop.counter}}" data-option="Option2">
+                                <input type="radio" name="q{{forloop.counter}}" value="Option2" id="q{{forloop.counter}}_opt2">
+                                <label for="q{{forloop.counter}}_opt2" class="mb-0">{{q.option2}}</label>
+                            </div>
+                            
+                            <div class="option-container" data-question="{{forloop.counter}}" data-option="Option3">
+                                <input type="radio" name="q{{forloop.counter}}" value="Option3" id="q{{forloop.counter}}_opt3">
+                                <label for="q{{forloop.counter}}_opt3" class="mb-0">{{q.option3}}</label>
+                            </div>
+                            
+                            <div class="option-container" data-question="{{forloop.counter}}" data-option="Option4">
+                                <input type="radio" name="q{{forloop.counter}}" value="Option4" id="q{{forloop.counter}}_opt4">
+                                <label for="q{{forloop.counter}}_opt4" class="mb-0">{{q.option4}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button type="button" class="nav-btn" id="prev-btn-{{forloop.counter}}" 
+                        onclick="previousQuestion()" {% if forloop.first %}disabled{% endif %}>
+                    ← Previous
+                </button>
+                
+                {% if forloop.last %}
+                <button type="submit" class="submit-btn" onclick="return submitExam()">
+                    <i class="fas fa-paper-plane"></i> Submit Exam
+                </button>
+                {% else %}
+                <button type="button" class="nav-btn" onclick="nextQuestion()">
+                    Next →
+                </button>
+                {% endif %}
+            </div>
         </div>
-
-
-        <div class="form-check mx-4 d-flex align-items-center">
-            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option2}}" value="Option2">
-            <label class="form-check-label ml-3" for="option2">
-              {{q.option2}}
-            </label>
-        </div>
-
-
-        <div class="form-check mx-4 d-flex align-items-center">
-            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option3}}" value="Option3">
-            <label class="form-check-label ml-3" for="option3">
-              {{q.option3}}
-            </label>
-        </div>
-
-
-        <div class="form-check mx-4 d-flex align-items-center">
-            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option4}}" value="Option4">
-            <label class="form-check-label ml-3" for="option4">
-              {{q.option4}}
-            </label>
-        </div>
-
         {% endfor %}
-        <input class="btn btn-primary btn-lg" style="border-radius: 0%;" type="submit" value="Submit Answers">
     </form>
 </div>
 
 <script>
-    // Anti-cheating variables
-    let violationCount = 0;
-    let isFullscreen = false;
-    let lastFocusTime = Date.now();
-    let warningTimeout;
+    // Global variables
+    let currentQuestionIndex = 0;
+    let totalQuestions = document.querySelectorAll('.question-page').length;
+    let answeredQuestions = new Set();
+    let questionTimer;
+    let timeLeft = 60;
+    let tabSwitchCount = 0;
+    let maxTabSwitches = 2; // Allow 2 tab switches before canceling
+    let examCancelled = false;
     
-    // Initialize anti-cheating features
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeAntiCheating();
-        checkFullscreen();
-    });
+    // Initialize exam functionality
+    function initializeExam() {
+        try {
+            console.log('Starting exam initialization...');
+            
+            // Set course ID in cookie
+            setCookie('course_id', '{{ course.id }}', 3);
+            console.log('Course ID set in cookie');
+            
+            // Initialize question display
+            showQuestion(currentQuestionIndex);
+            console.log('Question display initialized');
+            
+            // Initialize progress
+            updateProgress();
+            console.log('Progress tracking initialized');
+            
+            // Initialize radio button listeners
+            initializeRadioListeners();
+            console.log('Radio button listeners initialized');
+            
+            // Initialize tab switching detection
+            initializeTabSwitchDetection();
+            console.log('Tab switching detection initialized');
+            
+            // Start question timer
+            startQuestionTimer();
+            console.log('Question timer started');
+            
+            console.log('Exam initialization completed successfully');
+        } catch (error) {
+            console.error('Error during exam initialization:', error);
+        }
+    }
     
-    function initializeAntiCheating() {
-        // Tab visibility change detection
-        document.addEventListener('visibilitychange', handleVisibilityChange);
+    // Initialize radio button listeners for MCQ selection
+    function initializeRadioListeners() {
+        document.querySelectorAll('.option-container').forEach(container => {
+            // Make entire container clickable
+            container.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const questionNum = this.getAttribute('data-question');
+                const optionValue = this.getAttribute('data-option');
+                
+                console.log('Option container clicked:', questionNum, optionValue);
+                selectOption(this, questionNum, optionValue);
+            });
+            
+            // Also make label clickable
+            const label = container.querySelector('label');
+            if (label) {
+                label.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const container = this.closest('.option-container');
+                    const questionNum = container.getAttribute('data-question');
+                    const optionValue = container.getAttribute('data-option');
+                    
+                    console.log('Label clicked:', questionNum, optionValue);
+                    selectOption(container, questionNum, optionValue);
+                });
+            }
+            
+            // Radio button change event
+            const radio = container.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.addEventListener('change', function() {
+                    const container = this.closest('.option-container');
+                    const questionNum = container.getAttribute('data-question');
+                    const optionValue = container.getAttribute('data-option');
+                    
+                    console.log('Radio changed:', questionNum, optionValue);
+                    selectOption(container, questionNum, optionValue);
+                });
+            }
+        });
+    }
+    
+    // Simplified option selection - no restrictions
+    function selectOption(container, questionNum, optionValue) {
+        if (examCancelled) {
+            return false;
+        }
         
-        // Window focus/blur detection
+        console.log('selectOption called:', { questionNum, optionValue });
+        
+        // Remove selected class from all options in this question
+        const questionContainer = container.closest('.question-container');
+        questionContainer.querySelectorAll('.option-container').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        // Add selected class to clicked option
+        container.classList.add('selected');
+        
+        // Check the radio button
+        const radio = container.querySelector('input[type="radio"]');
+        if (radio) {
+            radio.checked = true;
+            console.log('Radio button checked:', radio.name, radio.value);
+        }
+        
+        // Mark question as answered
+        answeredQuestions.add(parseInt(questionNum));
+        updateProgress();
+        
+        // Save answer to cookie
+        setCookie('q' + questionNum, optionValue, 3);
+        console.log('Answer saved to cookie:', 'q' + questionNum, optionValue);
+        
+        // Visual feedback
+        container.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            container.style.transform = 'scale(1)';
+        }, 150);
+        
+        return true;
+    }
+    
+    // Show specific question
+    function showQuestion(index) {
+        const questions = document.querySelectorAll('.question-page');
+        questions.forEach((q, i) => {
+            q.style.display = i === index ? 'block' : 'none';
+        });
+        
+        currentQuestionIndex = index;
+        updateQuestionCounter();
+        startQuestionTimer();
+    }
+    
+    // Navigation functions
+    function nextQuestion() {
+        if (examCancelled) {
+            return false;
+        }
+        
+        if (currentQuestionIndex < totalQuestions - 1) {
+            showQuestion(currentQuestionIndex + 1);
+        }
+    }
+    
+    function previousQuestion() {
+        if (examCancelled) {
+            return false;
+        }
+        
+        if (currentQuestionIndex > 0) {
+            showQuestion(currentQuestionIndex - 1);
+        }
+    }
+    
+    // Timer functions
+    function startQuestionTimer() {
+        clearInterval(questionTimer);
+        timeLeft = 60; // 1 minute per question
+        updateTimerDisplay();
+        
+        questionTimer = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            
+            if (timeLeft <= 0) {
+                clearInterval(questionTimer);
+                if (currentQuestionIndex < totalQuestions - 1) {
+                    nextQuestion();
+                } else {
+                    submitExam();
+                }
+            }
+        }, 1000);
+    }
+    
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const timerElement = document.getElementById('timeRemaining');
+        if (timerElement) {
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }
+    
+    // Progress tracking
+    function updateProgress() {
+        const progress = (answeredQuestions.size / totalQuestions) * 100;
+        
+        // Update progress bar
+        const progressBar = document.getElementById('progressBar');
+        if (progressBar) {
+            progressBar.style.width = progress + '%';
+        }
+        
+        // Update progress text
+        const progressText = document.getElementById('progressText');
+        const progressCount = document.getElementById('progressCount');
+        if (progressText && progressCount) {
+            progressCount.textContent = `${answeredQuestions.size}/${totalQuestions}`;
+            progressText.style.display = 'block';
+        }
+    }
+    
+    function updateQuestionCounter() {
+        const questionCounters = document.querySelectorAll('.question-counter');
+        if (questionCounters.length > 0) {
+            questionCounters.forEach((counter, index) => {
+                if (index === currentQuestionIndex) {
+                    counter.style.display = 'block';
+                } else {
+                    counter.style.display = 'none';
+                }
+            });
+        }
+    }
+    
+    // Submit exam
+    function submitExam() {
+        if (examCancelled) {
+            return false;
+        }
+        
+        clearInterval(questionTimer);
+        
+        // Save all answers
+        saveAns();
+        
+        // Redirect to results
+        window.location.href = "{% url 'calculate-marks' %}";
+    }
+    
+    // Save answers function
+    function saveAns() {
+        const questions = document.querySelectorAll('.question-page');
+        questions.forEach((question, index) => {
+            const selectedRadio = question.querySelector('input[type="radio"]:checked');
+            if (selectedRadio) {
+                const questionNum = index + 1;
+                const answer = selectedRadio.value;
+                setCookie('q' + questionNum, answer, 3);
+                console.log('Saved answer:', 'q' + questionNum, answer);
+            }
+        });
+    }
+    
+    // Tab switching detection
+    function initializeTabSwitchDetection() {
+        console.log('Initializing tab switch detection...');
+        
+        // Listen for visibility change (tab switching)
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        console.log('Visibility change listener added');
+        
+        // Listen for window focus/blur
         window.addEventListener('focus', handleWindowFocus);
         window.addEventListener('blur', handleWindowBlur);
+        console.log('Window focus/blur listeners added');
         
-        // Prevent copy-paste
-        document.addEventListener('copy', preventCopyPaste);
-        document.addEventListener('paste', preventCopyPaste);
-        document.addEventListener('cut', preventCopyPaste);
-        
-        // Prevent right-click context menu
-        document.addEventListener('contextmenu', preventRightClick);
-        
-        // Prevent keyboard shortcuts
-        document.addEventListener('keydown', preventKeyboardShortcuts);
-        
-        // Prevent drag and drop
-        document.addEventListener('dragstart', preventDragDrop);
-        document.addEventListener('drop', preventDragDrop);
-        
-        // Monitor mouse leaving window
+        // Listen for mouse leaving window
         document.addEventListener('mouseleave', handleMouseLeave);
+        console.log('Mouse leave listener added');
         
-        // Periodic focus check
+        // Check focus periodically
         setInterval(checkFocus, 1000);
+        console.log('Focus check interval set');
+        
+        // Test the detection is working
+        setTimeout(() => {
+            console.log('Tab switch detection initialized successfully');
+            console.log('Current tab switch count:', tabSwitchCount);
+        }, 1000);
     }
     
     function handleVisibilityChange() {
-        if (document.hidden) {
-            reportViolation('TAB_SWITCH', 'Tab switch detected');
+        console.log('Visibility change detected. Hidden:', document.hidden, 'Cancelled:', examCancelled);
+        
+        if (document.hidden && !examCancelled) {
+            tabSwitchCount++;
+            console.log('Tab switch detected. Count:', tabSwitchCount);
+            
+            if (tabSwitchCount <= maxTabSwitches) {
+                showTabSwitchWarning();
+            } else {
+                cancelExam('Multiple tab switches detected. Exam cancelled for security reasons.');
+            }
         }
     }
     
     function handleWindowFocus() {
-        lastFocusTime = Date.now();
-        hideWarningBanner();
+        // Reset focus when window gains focus
+        if (!examCancelled) {
+            console.log('Window focused');
+        }
     }
     
     function handleWindowBlur() {
-        reportViolation('WINDOW_FOCUS_LOSS', 'Window focus lost');
+        if (!examCancelled) {
+            tabSwitchCount++;
+            console.log('Window lost focus. Count:', tabSwitchCount);
+            
+            if (tabSwitchCount <= maxTabSwitches) {
+                showTabSwitchWarning();
+            } else {
+                cancelExam('Window focus lost multiple times. Exam cancelled for security reasons.');
+            }
+        }
     }
     
     function handleMouseLeave(event) {
-        if (event.clientY <= 0) {
-            reportViolation('WINDOW_FOCUS_LOSS', 'Mouse left window area');
-        }
-    }
-    
-    function preventCopyPaste(event) {
-        event.preventDefault();
-        reportViolation('COPY_PASTE', 'Copy/paste attempt detected');
-        return false;
-    }
-    
-    function preventRightClick(event) {
-        event.preventDefault();
-        reportViolation('COPY_PASTE', 'Right-click context menu attempt');
-        return false;
-    }
-    
-    function preventKeyboardShortcuts(event) {
-        // Prevent common shortcuts
-        const forbiddenKeys = [
-            'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',
-            'Tab', 'Escape'
-        ];
-        
-        const forbiddenCombos = [
-            {ctrl: true, key: 'c'}, // Copy
-            {ctrl: true, key: 'v'}, // Paste
-            {ctrl: true, key: 'x'}, // Cut
-            {ctrl: true, key: 'a'}, // Select all
-            {ctrl: true, key: 'z'}, // Undo
-            {ctrl: true, key: 'y'}, // Redo
-            {ctrl: true, key: 'f'}, // Find
-            {ctrl: true, key: 'u'}, // View source
-            {alt: true, key: 'Tab'}, // Switch tabs
-            {alt: true, key: 'F4'}, // Close window
-        ];
-        
-        // Check for forbidden keys
-        if (forbiddenKeys.includes(event.key)) {
-            event.preventDefault();
-            reportViolation('COPY_PASTE', `Forbidden key pressed: ${event.key}`);
-            return false;
-        }
-        
-        // Check for forbidden combinations
-        for (let combo of forbiddenCombos) {
-            if (event.ctrlKey === combo.ctrl && event.altKey === combo.alt && 
-                event.key.toLowerCase() === combo.key) {
-                event.preventDefault();
-                reportViolation('COPY_PASTE', `Forbidden keyboard shortcut: ${event.key}`);
-                return false;
+        if (event.clientY <= 0 && !examCancelled) {
+            tabSwitchCount++;
+            console.log('Mouse left window. Count:', tabSwitchCount);
+            
+            if (tabSwitchCount <= maxTabSwitches) {
+                showTabSwitchWarning();
+            } else {
+                cancelExam('Mouse left window multiple times. Exam cancelled for security reasons.');
             }
         }
-    }
-    
-    function preventDragDrop(event) {
-        event.preventDefault();
-        return false;
     }
     
     function checkFocus() {
-        if (!document.hasFocus()) {
-            reportViolation('WINDOW_FOCUS_LOSS', 'Window lost focus');
-        }
-    }
-    
-    function reportViolation(type, description) {
-        violationCount++;
-        document.getElementById('violationCount').textContent = violationCount;
-        
-        // Show warning banner
-        showWarningBanner();
-        
-        // Send violation to server
-        fetch('/student/report-cheating', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({
-                violation_type: type,
-                description: description
-            })
-        }).catch(error => {
-            console.error('Error reporting violation:', error);
-        });
-        
-        // Auto-hide warning after 5 seconds
-        clearTimeout(warningTimeout);
-        warningTimeout = setTimeout(hideWarningBanner, 5000);
-    }
-    
-    function showWarningBanner() {
-        document.getElementById('warningBanner').style.display = 'block';
-    }
-    
-    function hideWarningBanner() {
-        document.getElementById('warningBanner').style.display = 'none';
-    }
-    
-    function checkFullscreen() {
-        if (!document.fullscreenElement && !document.webkitFullscreenElement && 
-            !document.mozFullScreenElement && !document.msFullscreenElement) {
-            document.getElementById('fullscreenWarning').style.display = 'block';
-        } else {
-            document.getElementById('fullscreenWarning').style.display = 'none';
-            isFullscreen = true;
-        }
-    }
-    
-    function requestFullscreen() {
-        const elem = document.documentElement;
-        
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-        } else if (elem.mozRequestFullScreen) {
-            elem.mozRequestFullScreen();
-        } else if (elem.msRequestFullscreen) {
-            elem.msRequestFullscreen();
-        }
-        
-        setTimeout(checkFullscreen, 100);
-    }
-    
-    // Monitor fullscreen changes
-    document.addEventListener('fullscreenchange', checkFullscreen);
-    document.addEventListener('webkitfullscreenchange', checkFullscreen);
-    document.addEventListener('mozfullscreenchange', checkFullscreen);
-    document.addEventListener('MSFullscreenChange', checkFullscreen);
-
-    function saveAns() {
-        var ele = document.getElementsByTagName('input');
-        for (i = 0; i < ele.length; i++) {
-            if (ele[i].type = "radio") {
-                if (ele[i].checked) {
-                    setCookie(ele[i].name, ele[i].value, 3)
-                }
+        if (!document.hasFocus() && !examCancelled) {
+            tabSwitchCount++;
+            console.log('Focus check failed. Count:', tabSwitchCount);
+            
+            if (tabSwitchCount <= maxTabSwitches) {
+                showTabSwitchWarning();
+            } else {
+                cancelExam('Lost focus multiple times. Exam cancelled for security reasons.');
             }
         }
     }
-
-    function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    
+    function showTabSwitchWarning() {
+        const warningDiv = document.getElementById('tabSwitchWarning');
+        const warningCount = document.getElementById('warningCount');
+        
+        if (warningDiv && warningCount) {
+            warningCount.textContent = tabSwitchCount;
+            warningDiv.style.display = 'block';
+            
+            // Hide warning after 5 seconds
+            setTimeout(() => {
+                warningDiv.style.display = 'none';
+            }, 5000);
+        }
     }
+    
+    function cancelExam(reason) {
+        examCancelled = true;
+        clearInterval(questionTimer);
+        
+        // Show cancellation message
+        const cancellationDiv = document.getElementById('examCancellation');
+        const reasonText = document.getElementById('cancellationReason');
+        
+        if (cancellationDiv && reasonText) {
+            reasonText.textContent = reason;
+            cancellationDiv.style.display = 'block';
+        }
+        
+        // Disable all interactions
+        disableExamInteractions();
+        
+        // Start countdown timer
+        let countdown = 5;
+        const countdownElement = document.getElementById('redirectCountdown');
+        
+        const countdownTimer = setInterval(() => {
+            countdown--;
+            if (countdownElement) {
+                countdownElement.textContent = countdown;
+            }
+            
+            if (countdown <= 0) {
+                clearInterval(countdownTimer);
+                window.location.href = "{% url 'student-exam' %}";
+            }
+        }, 1000);
+    }
+    
+    function disableExamInteractions() {
+        // Disable all buttons and inputs
+        const buttons = document.querySelectorAll('button, input, .option-container');
+        buttons.forEach(button => {
+            button.disabled = true;
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.5';
+        });
+        
+        // Add overlay to prevent interaction
+        const overlay = document.createElement('div');
+        overlay.id = 'examOverlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        `;
+        overlay.innerHTML = '<div>Exam has been cancelled. Redirecting...</div>';
+        document.body.appendChild(overlay);
+    }
+    
+    // Cookie utility functions
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+    
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Exam page loaded, initializing...');
+        initializeExam();
+        
+        // Add manual test function to window for debugging
+        window.testTabSwitchWarning = function() {
+            console.log('Manual test: Triggering tab switch warning');
+            tabSwitchCount++;
+            showTabSwitchWarning();
+        };
+        
+        // Add manual test function to window for debugging
+        window.testExamCancellation = function() {
+            console.log('Manual test: Triggering exam cancellation');
+            cancelExam('Manual test: Exam cancelled for testing purposes.');
+        };
+        
+        console.log('Test functions available: testTabSwitchWarning() and testExamCancellation()');
+    });
 </script>
 
 <br><br><br><br><br><br> {% endblock content %}
