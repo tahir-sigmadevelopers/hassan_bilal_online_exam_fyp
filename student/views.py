@@ -52,8 +52,19 @@ def student_dashboard_view(request):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_exam_view(request):
-    courses=QMODEL.Course.objects.all()
-    return render(request,'student/student_exam.html',{'courses':courses})
+    courses = QMODEL.Course.objects.all()
+    student = models.Student.objects.get(user_id=request.user.id)
+    
+    # Check which courses the student has already taken
+    courses_with_status = []
+    for course in courses:
+        has_taken_exam = QMODEL.Result.objects.filter(student=student, exam=course).exists()
+        courses_with_status.append({
+            'course': course,
+            'has_taken_exam': has_taken_exam
+        })
+    
+    return render(request, 'student/student_exam.html', {'courses_with_status': courses_with_status})
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)

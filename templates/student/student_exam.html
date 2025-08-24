@@ -36,12 +36,20 @@
           <th>Action</th>
         </tr>
       </thead>
-      {% for t in courses %}
+      {% for course_data in courses_with_status %}
       <tr>
-
-        <td> {{t.course_name}}</td>
-        
-        <td class="text-center"><a class="btn btn-primary btn-sm" style="border-radius:0px;" href="{% url 'take-exam' t.id  %}"><span class="glyphicon glyphicon-check"></span> Attend Exam</a></td>
+        <td>{{course_data.course.course_name}}</td>
+        <td class="text-center">
+          {% if course_data.has_taken_exam %}
+            <a class="btn btn-success btn-sm" style="border-radius:0px;" href="{% url 'check-marks' course_data.course.id %}">
+              <span class="glyphicon glyphicon-eye-open"></span> View Marks
+            </a>
+          {% else %}
+            <a class="btn btn-primary btn-sm" style="border-radius:0px;" href="{% url 'take-exam' course_data.course.id %}">
+              <span class="glyphicon glyphicon-check"></span> Attend Exam
+            </a>
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </table>
